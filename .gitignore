@@ -1,0 +1,7 @@
+build/
+**/build/
+**/twin*.mp4
+**/out/reel.mp4
+**/broll/*.mov
+node_modules/
+__pycache__/

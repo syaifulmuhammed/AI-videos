@@ -1,0 +1,35 @@
+{
+  "_source": "intervals.icu weekly report via Montis ICU Coach, athlete i773595, pulled 2026-10-30 (Asia/Muscat). Re-pull before posting if more than a day or two passes.",
+  "athlete": { "first_name": "Syaiful", "ftp_w": 245, "weight_kg": 77 },
+  "week": {
+    "range": "24-30 Oct 2026",
+    "hours": 11.1,
+    "distance_km": 372,
+    "tss": 795
+  },
+  "load": {
+    "fitness_ctl": 77,
+    "fatigue_atl": 116,
+    "form_tsb": -39
+  },
+  "coach": {
+    "directive": "Reduce load. Prioritise recovery.",
+    "phase": "Taper"
+  },
+  "race": {
+    "name": "Masters TT",
+    "priority": "A",
+    "date_label": "7 Nov",
+    "days_to_go": 8,
+    "race_day_form_tsb": 13,
+    "target_form_min": 8,
+    "target_form_max": 18
+  },
+  "power_gains": {
+    "window": "last 85 days vs previous 85",
+    "items": [
+      { "label": "60-min power", "watts": 219, "delta_pct": 10.1 },
+      { "label": "20-min power", "watts": 256, "delta_pct": 3.6 }
+    ]
+  }
+}

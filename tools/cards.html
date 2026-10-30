@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: #0b0f14;
+    --panel: #141b24;
+    --line: #243042;
+    --text: #f4f6f8;
+    --muted: #8a97a6;
+    --lime: #c6f432;
+    --red: #ff5a52;
+    --amber: #ffb020;
+    --green: #3ddc84;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; background: transparent; overflow: hidden; }
+  body { font-family: "Inter Display", "Inter", system-ui, sans-serif; color: var(--text); }
+  #stage { position: absolute; inset: 0; }
+  .full { position: absolute; inset: 0; background: radial-gradient(1200px 900px at 80% 0%, #1a2433 0%, var(--bg) 60%); }
+  .label { font-size: 30px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
+  .h1 { font-size: 76px; font-weight: 800; line-height: 1.04; letter-spacing: -0.02em; }
+  .muted { color: var(--muted); }
+  .abs { position: absolute; }
+  .box { background: var(--panel); border: 2px solid var(--line); border-radius: 28px; }
+  .pill { display: inline-block; padding: 10px 22px; border-radius: 999px; font-size: 26px; font-weight: 700; }
+  .ai-tag { left: 60px; top: 190px; background: rgba(0,0,0,0.55); color: #fff; border: 1.5px solid rgba(255,255,255,0.35); font-size: 22px; letter-spacing: 0.06em; }
+  .num { font-variant-numeric: tabular-nums; }
+  svg { position: absolute; left: 0; top: 0; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// Each card builds its DOM in setup() and positions it in frame(t).
+// t is seconds since the card started. Content stays inside Instagram's
+// safe area: below y=240, above y=1040 (captions and the twin bubble sit below).
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const easeOut = x => 1 - Math.pow(1 - clamp(x), 3);
+const prog = (t, start, dur) => easeOut((t - start) / dur);
+const fmt = (v, d = 0) => v.toFixed(d);
+const signed = (v, d = 0) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+
+function reveal(el, p, dy = 40) {
+  el.style.opacity = p;
+  el.style.transform = `translateY(${(1 - p) * dy}px)`;
+}
+
+const CARDS = {
+  hook: {
+    layout: "overlay",
+    animEnd: 1.6,
+    setup(D) {
+      return `
+        <div class="abs pill ai-tag" id="tag">AI-generated digital twin</div>
+        <div class="abs" id="box" style="left:60px; right:60px; top:250px; padding:28px 40px; border-radius:30px; background:rgba(11,15,20,0.86);">
+          <div style="font-size:54px; font-weight:800; line-height:1.05;">My AI coach told me to</div>
+          <div id="stop" style="font-size:150px; font-weight:900; line-height:0.95; color:var(--red); letter-spacing:-0.03em;">STOP.</div>
+          <div class="pill" id="days" style="margin-top:14px; background:var(--lime); color:#0b0f14; font-size:30px;">${D.race.days_to_go} days before my A race</div>
+        </div>`;
+    },
+    frame(t) {
+      reveal(q("#box"), prog(t, 0, 0.5));
+      const s = prog(t, 0.35, 0.45);
+      q("#stop").style.transform = `scale(${0.6 + 0.4 * s})`;
+      q("#stop").style.transformOrigin = "left center";
+      q("#stop").style.opacity = s;
+      reveal(q("#days"), prog(t, 0.9, 0.5), 20);
+      q("#tag").style.opacity = prog(t, 0, 0.4);
+    },
+  },
+
+  pipeline: {
+    layout: "full",
+    animEnd: 3.2,
+    setup(D) {
+      const node = (id, x, y, w, title, sub, accent) => `
+        <div class="abs box" id="${id}" style="left:${x}px; top:${y}px; width:${w}px; height:150px; padding:26px 32px; ${accent ? "border-color:var(--lime);" : ""}">
+          <div style="font-size:46px; font-weight:800;">${title}</div>
+          <div class="muted" style="font-size:26px; margin-top:6px;">${sub}</div>
+        </div>`;
+      return `
+        <div class="full"></div>
+        <div class="abs label" style="left:80px; top:250px;" id="lbl">My setup</div>
+        <div class="abs h1" style="left:80px; top:300px; width:920px;" id="hd">Every ride, analysed automatically.</div>
+        <svg width="1080" height="1920" id="wires">
+          <path id="w1" d="M290 645 C290 700, 540 690, 540 735" stroke="#c6f432" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path id="w2" d="M790 645 C790 700, 540 690, 540 735" stroke="#c6f432" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path id="w3" d="M540 885 L540 925" stroke="#c6f432" stroke-width="6" fill="none" stroke-linecap="round"/>
+        </svg>
+        ${node("n1", 80, 495, 420, "Garmin", "records every ride")}
+        ${node("n2", 580, 495, 420, "Strava", "social + backup sync")}
+        ${node("n3", 190, 735, 700, "intervals.icu", "fitness · fatigue · form")}
+        <div class="abs box" id="n4" style="left:290px; top:925px; width:500px; height:100px; padding:0; display:flex; align-items:center; justify-content:center; background:var(--lime); border-color:var(--lime); color:#0b0f14;">
+          <div style="font-size:44px; font-weight:900;">AI coach</div>
+        </div>`;
+    },
+    frame(t) {
+      reveal(q("#lbl"), prog(t, 0, 0.4));
+      reveal(q("#hd"), prog(t, 0.1, 0.5));
+      reveal(q("#n1"), prog(t, 0.5, 0.4));
+      reveal(q("#n2"), prog(t, 0.7, 0.4));
+      draw("#w1", prog(t, 1.1, 0.5));
+      draw("#w2", prog(t, 1.2, 0.5));
+      reveal(q("#n3"), prog(t, 1.6, 0.4));
+      draw("#w3", prog(t, 2.1, 0.3));
+      const p = prog(t, 2.3, 0.5);
+      q("#n4").style.opacity = p;
+      q("#n4").style.transform = `scale(${0.8 + 0.2 * p})`;
+    },
+  },
+
+  coach: {
+    layout: "full",
+    animEnd: 3.0,
+    setup(D) {
+      const chips = ["Power", "Heart rate", "Training load", "Fitness", "Fatigue", "Form", "Race calendar"];
+      return `
+        <div class="full"></div>
+        <div class="abs label" style="left:80px; top:250px;" id="lbl">AI coach on intervals.icu</div>
+        <div class="abs h1" style="left:80px; top:300px; width:920px;" id="hd">What it reads, every day:</div>
+        <div class="abs" style="left:80px; top:500px; width:920px; display:flex; flex-wrap:wrap; gap:22px;">
+          ${chips.map((c, i) => `<div class="box chip" id="c${i}" style="padding:24px 34px; font-size:44px; font-weight:700;">${c}</div>`).join("")}
+        </div>
+        <div class="abs" id="out" style="left:80px; top:880px; width:920px; font-size:38px; font-weight:600;">
+          <span class="muted">Output:</span> a daily call on how hard to train.
+        </div>`;
+    },
+    frame(t) {
+      reveal(q("#lbl"), prog(t, 0, 0.4));
+      reveal(q("#hd"), prog(t, 0.1, 0.5));
+      document.querySelectorAll(".chip").forEach((el, i) => {
+        const p = prog(t, 0.6 + i * 0.18, 0.35);
+        reveal(el, p, 24);
+        el.style.borderColor = p > 0.99 && i >= 3 && i <= 5 ? "var(--lime)" : "var(--line)";
+      });
+      reveal(q("#out"), prog(t, 2.2, 0.5), 20);
+    },
+  },
+
+  week: {
+    layout: "full",
+    animEnd: 3.4,
+    setup(D) {
+      const tile = (id, x, label, color) => `
+        <div class="abs box" id="${id}" style="left:${x}px; top:720px; width:290px; height:290px; padding:30px;">
+          <div class="muted" style="font-size:30px; font-weight:700;">${label}</div>
+          <div class="num" id="${id}v" style="font-size:120px; font-weight:900; color:${color}; margin-top:40px; letter-spacing:-0.03em;"></div>
+        </div>`;
+      return `
+        <div class="full"></div>
+        <div class="abs label" style="left:80px; top:250px;" id="lbl">This week · ${D.week.range}</div>
+        <div class="abs" id="big" style="left:80px; top:300px; display:flex; gap:56px; align-items:baseline;">
+          <div><span class="num" id="hrs" style="font-size:150px; font-weight:900; letter-spacing:-0.04em;"></span><span style="font-size:56px; font-weight:800;"> h</span></div>
+          <div><span class="num" id="km" style="font-size:150px; font-weight:900; letter-spacing:-0.04em;"></span><span style="font-size:56px; font-weight:800;"> km</span></div>
+        </div>
+        <div class="abs muted" id="tss" style="left:80px; top:500px; font-size:36px; font-weight:600;"></div>
+        <div class="abs" id="rule" style="left:80px; top:600px; width:920px; height:2px; background:var(--line);"></div>
+        <div class="abs label" id="lbl2" style="left:80px; top:640px; color:var(--muted);">Training load</div>
+        ${tile("t1", 80, "Fitness", "var(--text)")}
+        ${tile("t2", 395, "Fatigue", "var(--amber)")}
+        ${tile("t3", 710, "Form", "var(--red)")}`;
+    },
+    frame(t, D) {
+      reveal(q("#lbl"), prog(t, 0, 0.4));
+      const a = prog(t, 0.2, 1.0);
+      q("#hrs").textContent = fmt(D.week.hours * a, 1);
+      q("#km").textContent = fmt(D.week.distance_km * a);
+      reveal(q("#big"), prog(t, 0.1, 0.4));
+      q("#tss").textContent = `${fmt(D.week.tss * a)} TSS · training stress score`;
+      reveal(q("#tss"), prog(t, 0.6, 0.4), 16);
+      q("#rule").style.transform = `scaleX(${prog(t, 1.0, 0.5)})`;
+      q("#rule").style.transformOrigin = "left";
+      reveal(q("#lbl2"), prog(t, 1.2, 0.4), 16);
+      [["t1", D.load.fitness_ctl, false], ["t2", D.load.fatigue_atl, false], ["t3", D.load.form_tsb, true]].forEach(([id, v, sg], i) => {
+        const p = prog(t, 1.5 + i * 0.35, 0.8);
+        reveal(q("#" + id), prog(t, 1.5 + i * 0.35, 0.35), 30);
+        q("#" + id + "v").textContent = sg ? signed(v * p) : fmt(v * p);
+      });
+    },
+  },
+
+  verdict: {
+    layout: "full",
+    animEnd: 4.0,
+    setup(D) {
+      return `
+        <div class="full"></div>
+        <div class="abs label" style="left:80px; top:250px;" id="lbl">AI coach verdict</div>
+        <div class="abs" id="v1" style="left:80px; top:300px; font-size:104px; font-weight:900; line-height:1; letter-spacing:-0.03em;">Reduce load.</div>
+        <div class="abs" id="v2" style="left:80px; top:410px; font-size:104px; font-weight:900; line-height:1; letter-spacing:-0.03em; color:var(--lime);">Prioritise recovery.</div>
+        <div class="abs box" id="gbox" style="left:80px; top:580px; width:920px; height:440px; padding:36px 40px;">
+          <div style="font-size:34px; font-weight:800;">Form on race day</div>
+          <div class="muted" style="font-size:28px; margin-top:4px;">${D.race.name} · ${D.race.date_label} · ${D.race.priority} race</div>
+        </div>
+        <svg width="1080" height="1920">
+          <g id="gauge"></g>
+        </svg>
+        <div class="abs" id="mk" style="top:0; left:0;"></div>`;
+    },
+    frame(t, D) {
+      reveal(q("#lbl"), prog(t, 0, 0.4));
+      reveal(q("#v1"), prog(t, 0.15, 0.45));
+      reveal(q("#v2"), prog(t, 0.55, 0.45));
+      const gp = prog(t, 1.1, 0.5);
+      reveal(q("#gbox"), gp, 30);
+      // scale -45 .. +25 mapped across the box
+      const x0 = 130, x1 = 950, y = 820, lo = -45, hi = 25;
+      const X = v => x0 + (v - lo) / (hi - lo) * (x1 - x0);
+      const r = D.race;
+      const move = prog(t, 1.8, 1.4);
+      const cur = D.load.form_tsb + (r.race_day_form_tsb - D.load.form_tsb) * move;
+      const done = move > 0.98;
+      const col = done ? "#3ddc84" : (cur < r.target_form_min ? "#ff5a52" : "#3ddc84");
+      q("#gauge").setAttribute("opacity", gp);
+      q("#gauge").innerHTML = `
+        <rect x="${x0}" y="${y - 14}" width="${x1 - x0}" height="28" rx="14" fill="#243042"/>
+        <rect x="${X(r.target_form_min)}" y="${y - 14}" width="${X(r.target_form_max) - X(r.target_form_min)}" height="28" fill="#3ddc84" opacity="0.85"/>
+        <text x="${(X(r.target_form_min) + X(r.target_form_max)) / 2}" y="${y + 66}" fill="#3ddc84" font-size="26" font-weight="700" text-anchor="middle" font-family="Inter Display, Inter">sweet spot</text>
+        <text x="${(X(r.target_form_min) + X(r.target_form_max)) / 2}" y="${y + 98}" fill="#8a97a6" font-size="24" text-anchor="middle" font-family="Inter Display, Inter">${signed(r.target_form_min)} to ${signed(r.target_form_max)}</text>
+        <line x1="${X(0)}" y1="${y - 26}" x2="${X(0)}" y2="${y + 26}" stroke="#8a97a6" stroke-width="3"/>
+        <text x="${X(0)}" y="${y + 66}" fill="#8a97a6" font-size="24" text-anchor="middle" font-family="Inter Display, Inter">0</text>
+        <text x="${X(D.load.form_tsb)}" y="${y + 66}" fill="#ff5a52" font-size="26" font-weight="700" text-anchor="middle" font-family="Inter Display, Inter" opacity="${move > 0.05 ? 1 : 0}">today ${signed(D.load.form_tsb)}</text>
+        <polygon points="${X(cur) - 22},${y - 70} ${X(cur) + 22},${y - 70} ${X(cur)},${y - 30}" fill="${col}"/>
+        <text x="${X(cur)}" y="${y - 86}" fill="${col}" font-size="46" font-weight="900" text-anchor="middle" font-family="Inter Display, Inter">${signed(Math.round(cur))}</text>`;
+    },
+  },
+
+  gains: {
+    layout: "full",
+    animEnd: 2.8,
+    setup(D) {
+      const rows = D.power_gains.items.map((it, i) => `
+        <div class="abs box gain" id="g${i}" style="left:80px; top:${520 + i * 250}px; width:920px; height:220px; padding:32px 40px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div style="font-size:40px; font-weight:800;">${it.label}</div>
+            <div class="muted num" style="font-size:32px; font-weight:600;">${it.watts} W</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:30px; margin-top:24px;">
+            <div style="flex:1; height:24px; border-radius:12px; background:#243042; overflow:hidden;">
+              <div class="bar" id="b${i}" style="height:100%; width:0; background:var(--lime); border-radius:12px;"></div>
+            </div>
+            <div class="num" id="p${i}" style="font-size:84px; font-weight:900; color:var(--lime); width:280px; text-align:right; letter-spacing:-0.03em;"></div>
+          </div>
+        </div>`).join("");
+      return `
+        <div class="full"></div>
+        <div class="abs label" style="left:80px; top:250px;" id="lbl">${D.power_gains.window}</div>
+        <div class="abs h1" style="left:80px; top:300px; width:920px;" id="hd">The work is paying off.</div>
+        ${rows}`;
+    },
+    frame(t, D) {
+      reveal(q("#lbl"), prog(t, 0, 0.4));
+      reveal(q("#hd"), prog(t, 0.1, 0.5));
+      const maxPct = Math.max(...D.power_gains.items.map(i => i.delta_pct));
+      D.power_gains.items.forEach((it, i) => {
+        reveal(q("#g" + i), prog(t, 0.6 + i * 0.3, 0.4), 30);
+        const p = prog(t, 0.9 + i * 0.3, 1.2);
+        q("#b" + i).style.width = `${(it.delta_pct / maxPct) * 100 * p}%`;
+        q("#p" + i).textContent = signed(it.delta_pct * p, 1) + "%";
+      });
+    },
+  },
+
+  cta: {
+    layout: "overlay",
+    animEnd: 1.8,
+    setup(D) {
+      return `
+        <div class="abs pill ai-tag" id="tag">AI-generated digital twin</div>
+        <div class="abs" id="box" style="left:80px; right:80px; top:1230px; padding:30px 40px; border-radius:32px; background:var(--lime); color:#0b0f14; text-align:center;">
+          <div style="font-size:40px; font-weight:700;">Want my exact setup?</div>
+          <div style="font-size:88px; font-weight:900; letter-spacing:-0.02em; line-height:1.05;">Comment “COACH”</div>
+        </div>`;
+    },
+    frame(t) {
+      q("#tag").style.opacity = prog(t, 0, 0.4);
+      const p = prog(t, 0.6, 0.5);
+      reveal(q("#box"), p, 60);
+      const pulse = t > 1.2 ? 1 + 0.04 * Math.sin((t - 1.2) * 8) * Math.exp(-(t - 1.2) * 2) : 1;
+      q("#box").style.transform += ` scale(${pulse})`;
+    },
+  },
+};
+
+function q(s) { return document.querySelector(s); }
+function draw(sel, p) {
+  const el = q(sel);
+  const len = el.getTotalLength();
+  el.style.strokeDasharray = len;
+  el.style.strokeDashoffset = len * (1 - p);
+}
+
+let current, data;
+window.setupCard = (id, D) => {
+  current = CARDS[id];
+  data = D;
+  q("#stage").innerHTML = current.setup(D);
+  return { layout: current.layout, animEnd: current.animEnd };
+};
+window.renderAt = t => current.frame(t, data);
+window.cardIds = () => Object.keys(CARDS);
+</script>
+</body>
+</html>

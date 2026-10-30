@@ -1,0 +1,71 @@
+{
+  "title": "My AI coach told me to stop",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "pip": {
+    "_note": "Where your face sits in the twin video, as fractions of the frame. Used to crop the circle bubble shown over full-screen cards.",
+    "center_x": 0.5,
+    "center_y": 0.30,
+    "size": 0.62
+  },
+  "beats": [
+    {
+      "id": "hook",
+      "card": "hook",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "My AI coach just told me to stop training. Eight days before my race.",
+      "caption": "My AI coach just told me to STOP training. 8 days before my race."
+    },
+    {
+      "id": "pipeline",
+      "card": "pipeline",
+      "layout": "full",
+      "start": 5.6,
+      "say": "Here's the setup. My Garmin and Strava both feed into intervals dot I C U, which turns every ride into fitness, fatigue and form.",
+      "caption": "Here's the setup. Garmin and Strava both feed into intervals.icu, which turns every ride into fitness, fatigue and form."
+    },
+    {
+      "id": "coach",
+      "card": "coach",
+      "layout": "full",
+      "start": 14.2,
+      "say": "Then I connected an AI coach to it. It reads my power, heart rate and training load every single day.",
+      "caption": "Then I connected an AI coach to it. It reads my power, heart rate and training load every single day."
+    },
+    {
+      "id": "week",
+      "card": "week",
+      "layout": "full",
+      "start": 21.0,
+      "say": "This week I rode eleven hours and three hundred and seventy two kilometres. Fitness, seventy seven. Fatigue, one sixteen. Form, minus thirty nine.",
+      "caption": "This week: 11 hours, 372 km. Fitness 77. Fatigue 116. Form minus 39."
+    },
+    {
+      "id": "verdict",
+      "card": "verdict",
+      "layout": "full",
+      "start": 30.4,
+      "say": "The verdict? Reduce load. Prioritise recovery. If I back off now, I start my race on the seventh of November at plus thirteen form. Right in the sweet spot.",
+      "caption": "The verdict? Reduce load. Prioritise recovery. Back off now and I start race day at +13 form. Right in the sweet spot."
+    },
+    {
+      "id": "gains",
+      "card": "gains",
+      "layout": "full",
+      "start": 40.6,
+      "say": "And the work is paying off. My one hour power is up ten percent in three months.",
+      "caption": "And the work is paying off. My 1-hour power is up 10% in three months."
+    },
+    {
+      "id": "cta",
+      "card": "cta",
+      "layout": "overlay",
+      "start": 45.8,
+      "end": 52.0,
+      "say": "Garmin, Strava, intervals, and an AI coach on top. Comment COACH and I'll send you my exact setup.",
+      "caption": "Garmin + Strava + intervals.icu + an AI coach. Comment COACH and I'll send you my setup."
+    }
+  ]
+}

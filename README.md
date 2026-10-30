@@ -52,6 +52,21 @@ If the circle bubble cuts off your face, change `pip.center_x`, `pip.center_y` a
 python3 tools/build_reel.py reels/01-ai-coach-intervals --placeholder
 ```
 
+## HeyGen inside Claude
+
+HeyGen's official skills live in `.claude/skills/`, vendored from [heygen-com/skills](https://github.com/heygen-com/skills) (see `HEYGEN_SOURCE.txt`). Claude Code loads them automatically in this repo:
+
+- `heygen-avatar` creates or finds your digital twin (avatar + voice).
+- `heygen-video` generates a presenter video with that avatar.
+- `heygen-translate` dubs a finished video into another language, for example an Arabic version of a reel.
+
+The skills need one way to reach HeyGen. Pick one:
+
+1. **HeyGen MCP connector (recommended).** Sign-in is by OAuth and it uses your HeyGen plan credits. In claude.ai go to Settings → Connectors → Add custom connector, enter `https://mcp.heygen.com/mcp/v1/` and sign in. `.mcp.json` registers the same server for Claude Code on your own machine.
+2. **HeyGen CLI with an API key.** This is billed as API credits. Create a key at app.heygen.com/api, store it as the `HEYGEN_API_KEY` environment variable, and install the CLI with `curl -fsSL https://static.heygen.ai/cli/install.sh | bash`.
+
+For Claude Code cloud sessions, the environment's network access must allow `api.heygen.com`, `static.heygen.ai` and `mcp.heygen.com`.
+
 ## Refreshing the numbers
 
 Numbers live in `data.json`; the cards read from it every time they render. To update:

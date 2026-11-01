@@ -1,0 +1,86 @@
+/* Shared look for every scene of the reel. Text stays inside the 168-1150 px band:
+   captions sit at about 1180-1290 px and the twin bubble below them. */
+:root {
+  --ground: #0b0f14;
+  --panel: #141b24;
+  --line: #243042;
+  --ink: #f4f6f8;
+  --muted: #8a97a6;
+  --lime: #c6f432;
+  --red: #ff5a52;
+  --amber: #ffb020;
+  --green: #3ddc84;
+  --font: "Inter", system-ui, sans-serif;
+}
+
+.r-ground {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1100px 900px at 85% 0%, #1a2433 0%, rgba(26, 36, 51, 0) 70%),
+    var(--ground);
+}
+
+.r-stage {
+  position: absolute;
+  inset: 0;
+  font-family: var(--font);
+  color: var(--ink);
+}
+
+.r-label {
+  position: absolute;
+  left: 84px;
+  top: 236px;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+.r-title {
+  position: absolute;
+  left: 84px;
+  right: 84px;
+  top: 286px;
+  font-size: 92px;
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.r-source {
+  position: absolute;
+  left: 84px;
+  right: 84px;
+  top: 1104px;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.r-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.r-box {
+  background: var(--panel);
+  border: 3px solid var(--line);
+  border-radius: 32px;
+}
+
+.r-tag {
+  position: absolute;
+  left: 60px;
+  top: 190px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  font-family: var(--font);
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-composition-id="coach">
+  <body>
+    <template>
+      <div id="root" data-composition-id="coach" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+          }
+          #co-chips {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 560px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+          }
+          .co-chip {
+            padding: 26px 36px;
+            font-size: 48px;
+            font-weight: 700;
+          }
+          .co-chip.co-key {
+            border-color: var(--lime);
+          }
+          #co-out {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 1010px;
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.2;
+          }
+          #co-out span.co-dim {
+            color: var(--muted);
+          }
+        </style>
+
+        <div id="co-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div id="co-label" class="r-label">AI coach on intervals.icu</div>
+            <div id="co-title" class="r-title">What it reads, every&nbsp;day:</div>
+            <div id="co-chips">
+              <div class="co-chip r-box">Power</div>
+              <div class="co-chip r-box">Heart rate</div>
+              <div class="co-chip r-box">Training load</div>
+              <div class="co-chip r-box co-key">Fitness</div>
+              <div class="co-chip r-box co-key">Fatigue</div>
+              <div class="co-chip r-box co-key">Form</div>
+              <div class="co-chip r-box">Race calendar</div>
+            </div>
+            <div id="co-out"><span class="co-dim">Output:</span> how hard to train today.</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var tl = gsap.timeline({ paused: true });
+            var words = reel.splitWords(document.getElementById("co-title"));
+
+            tl.fromTo("#co-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);
+            // A different entrance from the last scene: words go from grey to ink.
+            words.forEach(function (w) { gsap.set(w, { color: "#5d6a7b" }); });
+            reel.wordsInk(tl, words, 0.03, "#5d6a7b", "#f4f6f8");
+
+            // Chips land as "power, heart rate and training load" is said (from ~2.4 s).
+            gsap.utils.toArray("#co-chips .co-chip").forEach(function (chip, i) {
+              tl.fromTo(chip, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 2.2 + i * 0.2);
+            });
+            tl.fromTo("#co-out", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 4.1);
+
+            window.__timelines["coach"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

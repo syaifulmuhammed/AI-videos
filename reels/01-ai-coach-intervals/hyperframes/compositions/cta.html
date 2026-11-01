@@ -1,0 +1,65 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-id="cta"
+  data-composition-variables='[
+    { "id": "keyword", "type": "string", "label": "Comment keyword", "default": "COACH" }
+  ]'
+>
+  <body>
+    <template>
+      <div id="root" data-composition-id="cta" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+            background: transparent;
+          }
+          #cta-box {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 880px;
+            padding: 30px 40px 36px;
+            border-radius: 34px;
+            background: var(--lime);
+            color: var(--ground);
+            text-align: center;
+            font-family: var(--font);
+          }
+          #cta-ask {
+            font-size: 42px;
+            font-weight: 700;
+          }
+          #cta-word {
+            font-size: 96px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+          }
+        </style>
+
+        <div id="cta-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div id="cta-tag" class="r-tag">AI-generated digital twin</div>
+          <div id="cta-box">
+            <div id="cta-ask">Want my exact setup?</div>
+            <div id="cta-word">Comment &ldquo;<span id="cta-key">COACH</span>&rdquo;</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
+            document.getElementById("cta-key").textContent = v.keyword || "COACH";
+
+            var tl = gsap.timeline({ paused: true });
+            tl.fromTo("#cta-tag", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.6);
+            // Arrives as "Comment COACH" is said, on a premium spring, then holds still.
+            tl.fromTo("#cta-box", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 2.6);
+            window.__timelines["cta"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-id="week"
+  data-composition-variables='[
+    { "id": "range", "type": "string", "label": "Week", "default": "24–30 Oct" },
+    { "id": "hours", "type": "number", "label": "Hours", "default": 11.1, "step": 0.1 },
+    { "id": "km", "type": "number", "label": "Distance (km)", "default": 372, "step": 1 },
+    { "id": "fitness", "type": "number", "label": "Fitness (CTL)", "default": 77, "step": 1 },
+    { "id": "fatigue", "type": "number", "label": "Fatigue (ATL)", "default": 116, "step": 1 },
+    { "id": "form", "type": "number", "label": "Form (TSB)", "default": -39, "step": 1 }
+  ]'
+>
+  <body>
+    <template>
+      <div id="root" data-composition-id="week" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+          }
+          .wk-hero {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 360px;
+            text-align: center;
+          }
+          .wk-big {
+            font-size: 300px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.05em;
+          }
+          .wk-unit {
+            font-size: 96px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-left: 12px;
+          }
+          .wk-cap {
+            margin-top: 18px;
+            font-size: 44px;
+            font-weight: 700;
+            color: var(--muted);
+          }
+          #wk-row {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 850px;
+            display: flex;
+            gap: 28px;
+          }
+          .wk-mini {
+            flex: 1;
+            padding: 26px 34px;
+          }
+          .wk-mini-k {
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--muted);
+          }
+          .wk-mini-v {
+            margin-top: 4px;
+            font-size: 96px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+          }
+        </style>
+
+        <div id="wk-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div id="wk-label" class="r-label">This week &middot; <span id="wk-range"></span></div>
+
+            <div id="wk-h1" class="wk-hero">
+              <div><span id="wk-h1-n" class="wk-big r-num">0.0</span><span class="wk-unit">h</span></div>
+              <div class="wk-cap">on the bike</div>
+            </div>
+            <div id="wk-h2" class="wk-hero">
+              <div><span id="wk-h2-n" class="wk-big r-num">0</span><span class="wk-unit">km</span></div>
+              <div class="wk-cap">ridden</div>
+            </div>
+            <div id="wk-h3" class="wk-hero">
+              <div><span id="wk-h3-n" class="wk-big r-num" style="color: var(--red)">0</span></div>
+              <div class="wk-cap">form &mdash; deep in the red</div>
+            </div>
+
+            <div id="wk-row">
+              <div id="wk-fit" class="wk-mini r-box">
+                <div class="wk-mini-k">Fitness</div>
+                <div id="wk-fit-v" class="wk-mini-v r-num"></div>
+              </div>
+              <div id="wk-fat" class="wk-mini r-box">
+                <div class="wk-mini-k">Fatigue</div>
+                <div id="wk-fat-v" class="wk-mini-v r-num" style="color: var(--amber)"></div>
+              </div>
+            </div>
+
+            <div id="wk-source" class="r-source">Source: intervals.icu</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
+            var hours = v.hours != null ? v.hours : 11.1;
+            var km = v.km != null ? v.km : 372;
+            var form = v.form != null ? v.form : -39;
+            document.getElementById("wk-range").textContent = v.range || "24–30 Oct";
+            document.getElementById("wk-fit-v").textContent = reel.format(v.fitness != null ? v.fitness : 77, 0);
+            document.getElementById("wk-fat-v").textContent = reel.format(v.fatigue != null ? v.fatigue : 116, 0);
+
+            var tl = gsap.timeline({ paused: true });
+            tl.fromTo("#wk-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);
+            tl.fromTo("#wk-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.4);
+
+            // One number at a time, swapped on one stage: hours, then km, then form.
+            tl.fromTo("#wk-h1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.15, ease: "power4.out" }, 0.03);
+            reel.count(tl, "#wk-h1-n", { from: 0, to: hours, decimals: 1, at: 0.1, duration: 1.4 });
+
+            tl.to("#wk-h1", { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 2.5);
+            tl.fromTo("#wk-h2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, 2.62);
+            reel.count(tl, "#wk-h2-n", { from: 0, to: km, decimals: 0, at: 2.65, duration: 1.4 });
+
+            // The load numbers land as they are spoken, without counting.
+            tl.fromTo("#wk-fit", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 4.7);
+            tl.fromTo("#wk-fat", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 5.9);
+
+            tl.to("#wk-h2", { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 6.9);
+            tl.fromTo("#wk-h3", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, 7.02);
+            reel.count(tl, "#wk-h3-n", { from: 0, to: form, decimals: 0, at: 7.05, duration: 1.2, ease: "power2.out" });
+
+            window.__timelines["week"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

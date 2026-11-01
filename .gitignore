@@ -5,3 +5,6 @@ build/
 **/broll/*.mov
 node_modules/
 __pycache__/
+**/hyperframes/assets/twin.mp4
+**/hyperframes/.hyperframes/
+**/hyperframes/renders/

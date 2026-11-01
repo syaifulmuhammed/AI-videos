@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en" data-composition-id="pipeline">
+  <body>
+    <template>
+      <div id="root" data-composition-id="pipeline" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+          }
+          .pl-node {
+            position: absolute;
+            height: 168px;
+            padding: 30px 36px;
+          }
+          .pl-name {
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+          }
+          .pl-sub {
+            margin-top: 8px;
+            font-size: 30px;
+            font-weight: 400;
+            color: var(--muted);
+          }
+          #pl-coach {
+            position: absolute;
+            left: 270px;
+            width: 540px;
+            top: 1000px;
+            height: 112px;
+            border-radius: 999px;
+            background: var(--lime);
+            color: var(--ground);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            font-weight: 900;
+          }
+        </style>
+
+        <div id="pl-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div id="pl-label" class="r-label">My setup</div>
+            <div id="pl-title" class="r-title">Every ride, analysed automatically.</div>
+
+            <svg id="pl-wires" width="1080" height="1920" style="position: absolute; left: 0; top: 0">
+              <path id="pl-w1" d="M290 708 C290 760, 540 744, 540 790" stroke="#c6f432" stroke-width="7" fill="none" stroke-linecap="round" />
+              <path id="pl-w2" d="M790 708 C790 760, 540 744, 540 790" stroke="#c6f432" stroke-width="7" fill="none" stroke-linecap="round" />
+              <path id="pl-w3" d="M540 958 L540 1000" stroke="#c6f432" stroke-width="7" fill="none" stroke-linecap="round" />
+            </svg>
+
+            <div id="pl-garmin" class="pl-node r-box" style="left: 84px; width: 412px; top: 540px">
+              <div class="pl-name">Garmin</div>
+              <div class="pl-sub">records every ride</div>
+            </div>
+            <div id="pl-strava" class="pl-node r-box" style="left: 584px; width: 412px; top: 540px">
+              <div class="pl-name">Strava</div>
+              <div class="pl-sub">social + backup sync</div>
+            </div>
+            <div id="pl-icu" class="pl-node r-box" style="left: 170px; width: 740px; top: 790px; border-color: var(--lime)">
+              <div class="pl-name">intervals.icu</div>
+              <div class="pl-sub">fitness &middot; fatigue &middot; form</div>
+            </div>
+            <div id="pl-coach">AI coach</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var tl = gsap.timeline({ paused: true });
+            var words = reel.splitWords(document.getElementById("pl-title"));
+
+            tl.fromTo("#pl-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);
+            reel.wordsIn(tl, words, 0.03);
+
+            // Sources arrive with the words "Garmin and Strava" (about 1.2 s in).
+            tl.fromTo("#pl-garmin", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, 1.1);
+            tl.fromTo("#pl-strava", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, 1.4);
+
+            ["#pl-w1", "#pl-w2", "#pl-w3"].forEach(function (sel) {
+              var len = document.querySelector(sel).getTotalLength();
+              gsap.set(sel, { strokeDasharray: len, strokeDashoffset: len });
+            });
+            tl.to("#pl-w1", { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, 2.4);
+            tl.to("#pl-w2", { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, 2.5);
+            tl.fromTo("#pl-icu", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, 2.8);
+
+            tl.to("#pl-w3", { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, 4.6);
+            tl.fromTo("#pl-coach", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, 4.85);
+
+            window.__timelines["pipeline"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-id="hook"
+  data-composition-variables='[
+    { "id": "days", "type": "number", "label": "Days to race", "default": 8, "min": 1, "step": 1 }
+  ]'
+>
+  <body>
+    <template>
+      <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+            background: transparent;
+          }
+          #hook-box {
+            position: absolute;
+            left: 60px;
+            right: 60px;
+            top: 252px;
+            padding: 30px 42px 34px;
+            border-radius: 32px;
+            background: rgba(11, 15, 20, 0.86);
+            font-family: var(--font);
+            color: var(--ink);
+          }
+          #hook-line {
+            font-size: 58px;
+            font-weight: 700;
+            line-height: 1.05;
+          }
+          #hook-stop {
+            font-size: 168px;
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            color: var(--red);
+            transform-origin: 0% 60%;
+          }
+          #hook-days {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 24px;
+            border-radius: 999px;
+            background: var(--lime);
+            color: var(--ground);
+            font-size: 34px;
+            font-weight: 900;
+          }
+        </style>
+
+        <div id="hook-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div id="hook-tag" class="r-tag">AI-generated digital twin</div>
+          <div id="hook-box">
+            <div id="hook-line">My AI coach told me to</div>
+            <div id="hook-stop">STOP.</div>
+            <div id="hook-days"><span id="hook-days-n">8</span> days before my A race</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var vars = window.__hyperframes ? window.__hyperframes.getVariables() : {};
+            document.getElementById("hook-days-n").textContent = vars.days != null ? vars.days : 8;
+
+            // Frame 0 is the thumbnail: the whole line is already on screen.
+            // STOP lands from slightly large, then everything holds still.
+            var tl = gsap.timeline({ paused: true });
+            tl.fromTo("#hook-stop", { scale: 1.14 }, { scale: 1, duration: 0.45, ease: "expo.out" }, 0.05);
+            tl.fromTo("#hook-days", { opacity: 0.0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power4.out" }, 0.55);
+            window.__timelines["hook"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

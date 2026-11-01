@@ -46,6 +46,16 @@ Options:
 
 If the circle bubble cuts off your face, change `pip.center_x`, `pip.center_y` and `pip.size` in `timeline.json`. They're fractions of the frame. If `--auto-sync` can't find enough pauses, it says so and falls back to the `start` times in `timeline.json`, which you can edit by hand.
 
+### 2b. Or build it with HyperFrames
+
+Each reel also has a HyperFrames project in `hyperframes/`. Its hand-written scenes live in `compositions/`. On the data cards, the twin shrinks into a bubble and grows back for the call to action.
+
+```bash
+python3 tools/hf_reel.py reels/01-ai-coach-intervals --twin reels/01-ai-coach-intervals/twin.mp4 --auto-sync --render
+```
+
+This writes `out/reel_hyperframes.mp4`. Use `--placeholder` in place of `--twin …` for a preview. To preview without rendering, run the script without `--render`, then `cd reels/01-ai-coach-intervals/hyperframes && npx hyperframes preview`. `REVIEW.md` in that folder records the design decisions.
+
 ### 3. Preview without a twin
 
 ```bash

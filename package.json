@@ -1,0 +1,13 @@
+{
+  "name": "ai-videos",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "hf": "hyperframes",
+    "hf:setup": "hyperframes browser ensure && hyperframes doctor"
+  },
+  "devDependencies": {
+    "gsap": "3.15.0",
+    "hyperframes": "0.8.227"
+  }
+}

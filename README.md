@@ -67,6 +67,26 @@ The skills need one way to reach HeyGen. Pick one:
 
 For Claude Code cloud sessions, the environment's network access must allow `api.heygen.com`, `static.heygen.ai` and `mcp.heygen.com`.
 
+## HyperFrames (HTML → video)
+
+[HyperFrames](https://github.com/heygen-com/hyperframes) is HeyGen's open-source framework for writing videos as HTML and rendering them to MP4. It's installed here in two parts:
+
+- **CLI:** pinned in `package.json` together with GSAP, the animation library its templates use.
+- **Skills:** the four core skills (`hyperframes`, `hyperframes-cli`, `hyperframes-registry`, `media-use`) are in `.claude/skills/`. See `HYPERFRAMES_SOURCE.txt`.
+
+Set up a fresh machine or cloud session:
+
+```bash
+npm install
+npm run hf:setup        # downloads the headless Chrome used for rendering, then runs a health check
+```
+
+Then ask Claude to "use /hyperframes to …", or use the CLI directly: `npx hyperframes init <name> --resolution portrait`, then `npx hyperframes render`.
+
+In Claude Code cloud sessions, `cdn.jsdelivr.net` is blocked, so the templates can't load GSAP from the CDN. Point the `<script>` at a local copy instead: copy `node_modules/gsap/dist/gsap.min.js` next to the project's `index.html`. Alternatively, allow `cdn.jsdelivr.net` in the environment's network settings.
+
+HyperFrames sends usage telemetry. To turn it off, set `HYPERFRAMES_NO_TELEMETRY=1`.
+
 ## Refreshing the numbers
 
 Numbers live in `data.json`; the cards read from it every time they render. To update:

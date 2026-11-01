@@ -8,3 +8,4 @@ __pycache__/
 **/hyperframes/assets/twin.mp4
 **/hyperframes/.hyperframes/
 **/hyperframes/renders/
+.venv/

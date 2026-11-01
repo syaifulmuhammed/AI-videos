@@ -77,6 +77,31 @@ The skills need one way to reach HeyGen. Pick one:
 
 For Claude Code cloud sessions, the environment's network access must allow `api.heygen.com`, `static.heygen.ai` and `mcp.heygen.com`.
 
+## Toolchain
+
+`tools/setup.sh` installs everything on a fresh machine or cloud session, skips what's already there, and prints each version:
+
+| Tool | Version | Where it comes from |
+|------|---------|---------------------|
+| ffmpeg | system (6.1.1 here) | OS package manager |
+| yt-dlp | 2026.10.26 | `requirements.txt`, installed into `.venv/` and linked onto `PATH` |
+| whisper.cpp (`whisper-cli`) | v1.9.5 (`482279b`) | built from source as a static binary; HyperFrames' `transcribe` uses it |
+| HyperFrames | 0.8.227 | `package.json` |
+| Remotion | 4.0.539 | `package.json` (with React 18.3.1) |
+
+Notes:
+
+- **Whisper models** download on first use from `huggingface.co` into `~/.cache/hyperframes/whisper/models/`, for example via `npx hyperframes transcribe <file> --model small.en`. To use `whisper-cli` directly, pass `-m <model file>`.
+- **Remotion** normally downloads its own Chrome. When it can't, as in cloud sessions, `remotion.config.js` uses a headless Chrome already on the machine.
+- **Remotion licence**: free for individuals and companies of up to 3 people. Larger companies need a company licence; see remotion.dev/license.
+- **yt-dlp**: only download videos you have the rights to use, such as your own uploads or clips licensed for reuse.
+- **Cloud sessions**: these hosts are blocked unless you add them to the environment's allowed domains:
+  - `huggingface.co` for Whisper models
+  - `remotion.media` for Remotion's own Chrome
+  - the video sites you want yt-dlp to download from, such as `youtube.com`, `googlevideo.com` and `instagram.com`
+
+  To have every new session ready, add `bash tools/setup.sh` to the environment's setup script.
+
 ## HyperFrames (HTML → video)
 
 [HyperFrames](https://github.com/heygen-com/hyperframes) is HeyGen's open-source framework for writing videos as HTML and rendering them to MP4. It's installed here in two parts:

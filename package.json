@@ -7,7 +7,11 @@
     "hf:setup": "hyperframes browser ensure && hyperframes doctor"
   },
   "devDependencies": {
+    "@remotion/cli": "4.0.539",
     "gsap": "3.15.0",
-    "hyperframes": "0.8.227"
+    "hyperframes": "0.8.227",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.539"
   }
 }

@@ -23,7 +23,21 @@ Narrated by the local AI voice "Michael" (`am_michael`) at 1.2× speed. Lines ar
 
 The same lines are in `twin_script.txt` for the digital-twin version.
 
-## 25-second cut (`timeline_25s.json` → `out/reel_25s.mp4`)
+## Final: 25-second cut, hook option 1 "the confession" (`timeline_25s_confess.json` → `out/reel_25s.mp4`)
+
+| # | Narrator says | On screen |
+|---|---------------|-----------|
+| 1 · Hook | "Last week was meant to be my taper... and I rode double!" | You riding, with "Last week was my taper. / I rode **DOUBLE.**", a "381 TSS vs 183 planned" pill and a "THAT'S ME" marker |
+| 2 · Setup | "My AI coach caught it. It reads every ride from Garmin and Strava on intervals.icu." | Garmin + Strava → intervals.icu → AI coach |
+| 3 · Verdict | "Its call? Back off! Two easy days: minus thirty-nine to minus five. Race day? Plus fourteen. Sweet spot." | **Reduce load. Stay fresh.** The marker moves −39 (30 Oct) → −5 (today) → +14 in the sweet spot |
+| 4 · Payoff | "And it's working! One hour power, up four percent." | **+4.3%** 1-hour power |
+| 5 · CTA | "Want my setup? Comment COACH!" | **Comment "COACH"** box over you riding |
+
+Look: every word is Montserrat in butter yellow, with white highlights. There are no dark boxes, scrims or outlines, just a soft shadow and a gentle footage grade. There's no music; add trending audio in Instagram. Data: intervals.icu, 381 TSS done against a 183 plan by 30 Oct; TSB −38.7 on 30 Oct, −5.3 on 2 Nov, and +13.7 projected for 7 Nov.
+
+Build: `python3 tools/hf_reel.py reels/01-ai-coach-intervals --timeline timeline_25s_confess.json --voice am_michael --render --out reels/01-ai-coach-intervals/out/reel_25s.mp4`
+
+## Earlier 25-second cut (`timeline_25s.json`, superseded)
 
 Five beats, built for cold viewers: the coach and week beats (the most jargon) are gone.
 

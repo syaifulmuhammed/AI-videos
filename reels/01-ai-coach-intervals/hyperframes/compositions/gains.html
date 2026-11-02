@@ -115,11 +115,11 @@
             reel.wordsIn(tl, words, 0.03);
 
             // One hero number; the smaller result stays grey so the hour reads first.
-            tl.fromTo("#gn-hero", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, 1.6);
-            reel.count(tl, "#gn-hero-n", { from: 0, to: hourPct, decimals: 1, signed: true, suffix: "%", at: 1.65, duration: 1.4 });
-            tl.fromTo("#gn-second", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 3.3);
-            tl.fromTo("#gn-bar", { scaleX: 0 }, { scaleX: Math.min(1, secondPct / hourPct), duration: 0.8, ease: "power2.out" }, 3.5);
-            tl.fromTo("#gn-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.8);
+            tl.fromTo("#gn-hero", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, 1.0);
+            reel.count(tl, "#gn-hero-n", { from: 0, to: hourPct, decimals: 1, signed: true, suffix: "%", at: 1.05, duration: 1.2 });
+            tl.fromTo("#gn-second", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 2.5);
+            tl.fromTo("#gn-bar", { scaleX: 0 }, { scaleX: Math.min(1, secondPct / hourPct), duration: 0.6, ease: "power2.out" }, 2.6);
+            tl.fromTo("#gn-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.2);
 
             window.__timelines["gains"] = tl;
           })();

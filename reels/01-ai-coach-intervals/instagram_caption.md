@@ -20,5 +20,6 @@ The good news: my 1-hour power is up 4% in the last three months 📈
 
 **Before you post:**
 - Turn on the AI label (Advanced settings → Add AI label).
+- Add a trending song in the Instagram editor and turn it down to about 15–25% under the voiceover (Mix audio).
 - Choose a cover frame from the verdict card (around 0:38, with the marker in the green band). It's the most striking still.
 - Prepare a DM reply for "COACH": a short summary of the setup or a link to a guide.

@@ -1,5 +1,10 @@
 # Review: reel 01 in HyperFrames
 
+## Punchier voiceover (2 Nov)
+- **Feedback:** the first narration felt flat for a reel. The script is rewritten into short lines with questions and exclamations, and read faster (`--speed 1.2`). The gaps between lines are cut to 0.3 s, plus a 0.6 s beat after the hook so its card meets the reading floor. The reel went from 58 s to 42.5 s.
+- **Retimed scenes:** week, verdict, gains, CTA and the hook punch-in are retimed to the faster read, so every number lands while it is spoken (checked against the caption timing on a phone-width review sheet).
+- **Music:** none in the file, because every music source is blocked here. You chose to add trending audio in the Instagram app at 15–25% under the voice.
+
 ## Voiceover version (2 Nov)
 - **Narrator:** no presenter. The free local Kokoro voice `am_michael` reads each beat's `say` line. You chose it from four samples in `voice-samples/`. HeyGen voices needed a sign-in and are blocked in this environment.
 - **Timing:** each beat lasts exactly as long as its line (0.45 s gaps, 1.6 s tail). Captions run inside each line's measured window, not estimates. Without word timestamps, the timing within a line is still proportional to character count.

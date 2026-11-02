@@ -3,7 +3,7 @@
 
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --twin twin.mp4 --auto-sync --render
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --placeholder --render
-  python3 tools/hf_reel.py reels/01-ai-coach-intervals --voice am_michael --render
+  python3 tools/hf_reel.py reels/01-ai-coach-intervals --voice am_michael --speed 1.2 --render
 
 The scenes in <reel>/hyperframes/compositions/ are hand-written and never touched here.
 This script writes only the parts that follow from data: assets/twin.mp4 or
@@ -31,18 +31,18 @@ HF = ROOT / "node_modules" / ".bin" / "hyperframes"
 SFX_DIR = ROOT / ".claude" / "skills" / "media-use" / "audio" / "assets" / "sfx"
 BUBBLE = (200, 1470, 130)  # centre x, centre y, radius of the twin bubble over full-screen cards
 LAYOUT = {"hook": "overlay", "cta": "overlay"}  # every other scene is a full-screen card
-VOICE_LEAD, VOICE_GAP, VOICE_TAIL = 0.15, 0.45, 1.6  # seconds before the first line, between lines, after the last
-PUNCH_IN = (2.75, 1.08)  # hard punch-in on the twin at "Five days before my race": time, scale
+VOICE_LEAD, VOICE_GAP, VOICE_TAIL = 0.1, 0.3, 1.6  # seconds before the first line, between lines, after the last
+PUNCH_IN = (2.4, 1.08)  # hard punch-in on the twin at "back off!": time, scale
 # Sound effects on visible actions, from the HyperFrames media-use library (Pixabay licence):
 # (seconds after the scene starts, file in assets/sfx, volume). Kept well under the voice.
 SFX = {
     "hook": [(0.05, "impact-bass-1", 0.35)],
     "pipeline": [(0.0, "whoosh", 0.3), (4.85, "pop", 0.4)],
     "coach": [(2.2, "pop", 0.25)],
-    "week": [(8.25, "ping", 0.3)],
-    "verdict": [(7.6, "chime", 0.3)],
-    "gains": [(3.05, "sparkle", 0.3)],
-    "cta": [(-0.6, "whoosh-short", 0.3), (2.6, "pop", 0.45)],  # voiceover cards move the pop to 3.6 (see sfx_tags)
+    "week": [(6.75, "ping", 0.3)],
+    "verdict": [(5.7, "chime", 0.3)],
+    "gains": [(2.25, "sparkle", 0.3)],
+    "cta": [(-0.6, "whoosh-short", 0.3), (1.1, "pop", 0.45)],
 }
 
 
@@ -89,7 +89,7 @@ def prepare_twin(src, dest, tl):
          "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", dest])
 
 
-def make_voiceover(project, build, tl, voice):
+def make_voiceover(project, build, tl, voice, speed=1.0):
     """Speak each beat's line with Kokoro, lay the lines end to end, and time the beats to them.
 
     Returns the total length; sets each beat's start and end, plus `speech` (start, end) for captions.
@@ -102,15 +102,15 @@ def make_voiceover(project, build, tl, voice):
     cache.mkdir(parents=True, exist_ok=True)
     t, clips = VOICE_LEAD, []
     for b in tl["beats"]:
-        key = hashlib.sha1(f"{voice}|{b['say']}".encode()).hexdigest()[:12]
+        key = hashlib.sha1(f"{voice}|{speed}|{b['say']}".encode()).hexdigest()[:12]
         wav = cache / f"{b['id']}-{key}.wav"
         if not wav.exists():
-            subprocess.run([HF, "tts", b["say"], "-v", voice, "-o", wav, "--json"], env=env, check=True, capture_output=True)
+            subprocess.run([HF, "tts", b["say"], "-v", voice, "-s", str(speed), "-o", wav, "--json"], env=env, check=True, capture_output=True)
         d = probe_duration(wav)
         b["start"] = 0.0 if not clips else round(t - VOICE_GAP / 2, 2)
         b["speech"] = (t, t + d)
         clips.append((wav, t))
-        t += d + VOICE_GAP
+        t += d + VOICE_GAP + b.get("hold", 0)  # an optional beat of silence after the line
     total = round(t - VOICE_GAP + VOICE_TAIL, 2)
     for i, b in enumerate(tl["beats"]):
         b["end"] = tl["beats"][i + 1]["start"] if i + 1 < len(tl["beats"]) else total
@@ -169,8 +169,6 @@ def sfx_tags(beats, total, voice):
         for offset, name, volume in SFX.get(b["card"], []):
             if voice and offset < 0:
                 continue  # that whoosh belongs to the twin growing back, which has no voiceover equivalent
-            if voice and b["card"] == "cta" and name == "pop":
-                offset = 3.6  # the CTA box lands later when narrated (compositions/cta.html)
             at = b["start"] + offset
             if offset < b["end"] - b["start"] and 0 <= at < total - 0.5:
                 length = min(probe_duration(SFX_DIR / f"{name}.mp3"), total - at)
@@ -348,6 +346,7 @@ def main():
     src.add_argument("--twin", type=Path, help="9:16 video of your digital twin reading twin_script.txt")
     src.add_argument("--placeholder", action="store_true", help="use a stand-in presenter")
     src.add_argument("--voice", help="no presenter: narrate with this local Kokoro voice (e.g. am_michael)")
+    ap.add_argument("--speed", type=float, default=1.2, help="narration speed for --voice (default 1.2: reels want a brisk read)")
     ap.add_argument("--auto-sync", action="store_true", help="align beats to the pauses in the twin's audio")
     ap.add_argument("--render", action="store_true", help="check, then render the reel")
     ap.add_argument("--out", type=Path, help="render path (default <reel>/out/reel_hyperframes.mp4)")
@@ -361,7 +360,7 @@ def main():
     data = json.loads((reel / "data.json").read_text())
 
     if a.voice:
-        total = make_voiceover(project, build, tl, a.voice)
+        total = make_voiceover(project, build, tl, a.voice, a.speed)
         beats = tl["beats"]
         (project / "assets" / "twin.mp4").unlink(missing_ok=True)
     else:

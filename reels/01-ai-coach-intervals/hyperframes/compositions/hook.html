@@ -117,9 +117,9 @@
             tl.fromTo("#hook-stop", { scale: 1.14 }, { scale: 1, duration: 0.45, ease: "expo.out" }, 0.05);
             tl.fromTo("#hook-days", { opacity: 0.0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power4.out" }, 0.55);
             if (card) {
-              // No face to punch in on: the card itself cuts tighter at "Five days before my race".
-              tl.set("#hook-box", { scale: 1.05, transformOrigin: "50% 50%" }, 2.9);
-              tl.fromTo("#hook-race", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 2.9);
+              // No face to punch in on: the card itself cuts tighter on "back off!".
+              tl.set("#hook-box", { scale: 1.05, transformOrigin: "50% 50%" }, 2.4);
+              tl.fromTo("#hook-race", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 2.4);
             }
             window.__timelines["hook"] = tl;
           })();

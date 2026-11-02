@@ -124,17 +124,17 @@
             tl.fromTo("#wk-h1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.15, ease: "power4.out" }, 0.03);
             reel.count(tl, "#wk-h1-n", { from: 0, to: hours, decimals: 1, at: 0.1, duration: 1.4 });
 
-            tl.to("#wk-h1", { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 2.5);
-            tl.fromTo("#wk-h2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, 2.62);
-            reel.count(tl, "#wk-h2-n", { from: 0, to: km, decimals: 0, at: 2.65, duration: 1.4 });
+            tl.to("#wk-h1", { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 1.9);
+            tl.fromTo("#wk-h2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, 2.02);
+            reel.count(tl, "#wk-h2-n", { from: 0, to: km, decimals: 0, at: 2.05, duration: 1.2 });
 
             // The load numbers land as they are spoken, without counting.
-            tl.fromTo("#wk-fit", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 4.7);
-            tl.fromTo("#wk-fat", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 5.9);
+            tl.fromTo("#wk-fit", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 3.4);
+            tl.fromTo("#wk-fat", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 4.6);
 
-            tl.to("#wk-h2", { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 6.9);
-            tl.fromTo("#wk-h3", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, 7.02);
-            reel.count(tl, "#wk-h3-n", { from: 0, to: form, decimals: 0, at: 7.05, duration: 1.2, ease: "power2.out" });
+            tl.to("#wk-h2", { opacity: 0, filter: "blur(8px)", duration: 0.16, ease: "power2.in" }, 5.8);
+            tl.fromTo("#wk-h3", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, 5.92);
+            reel.count(tl, "#wk-h3-n", { from: 0, to: form, decimals: 0, at: 5.95, duration: 0.8, ease: "power2.out" });
 
             window.__timelines["week"] = tl;
           })();

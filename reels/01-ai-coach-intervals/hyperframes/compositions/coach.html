@@ -71,7 +71,7 @@
             gsap.utils.toArray("#co-chips .co-chip").forEach(function (chip, i) {
               tl.fromTo(chip, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 2.2 + i * 0.2);
             });
-            tl.fromTo("#co-out", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 4.1);
+            tl.fromTo("#co-out", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 3.6);
 
             window.__timelines["coach"] = tl;
           })();

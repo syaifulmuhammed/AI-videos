@@ -99,12 +99,11 @@
             var tl = gsap.timeline({ paused: true });
             tl.fromTo("#cta-tag", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.6);
             // Arrives as "Comment COACH" is said, on a premium spring, then holds still.
-            // The narrator says "Comment COACH" about a second later than the twin script was timed for.
-            tl.fromTo("#cta-box", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, card ? 3.6 : 2.6);
+            tl.fromTo("#cta-box", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 1.1);
             if (card) {
-              // The four parts land as they are named: "Garmin, Strava, intervals, and an AI coach on top."
+              // A quick recap of the stack before the ask lands.
               gsap.utils.toArray("#cta-stack .cta-row").forEach(function (row, i) {
-                tl.fromTo(row, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, 0.2 + i * 0.75);
+                tl.fromTo(row, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, 0.05 + i * 0.18);
               });
             }
             window.__timelines["cta"] = tl;

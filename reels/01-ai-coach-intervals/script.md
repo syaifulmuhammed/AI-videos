@@ -7,19 +7,21 @@
 
 > **Post on 2 Nov, or update the day count.** The hook says "five days before my race", and the race is on 7 Nov. If you post on another day, change "Five" in `twin_script.txt` and `days_to_go` in `data.json`. Then re-pull the numbers, because form changes daily.
 
-## Beat sheet
+## Beat sheet (voiceover version, about 42 s)
 
-| # | Time | Twin says | On screen |
-|---|------|-----------|-----------|
-| 1 · Hook | 0:00–0:05 | "My AI coach just told me to back off. Five days before my race." | Twin full frame with a punch-in on "Five days". Top box: **My AI coach told me to BACK OFF.** · "5 days before my A race" |
-| 2 · Setup | 0:05–0:14 | "Here's the setup. My Garmin and Strava both feed into intervals.icu, which turns every ride into fitness, fatigue and form." | Flow diagram: Garmin + Strava → intervals.icu → AI coach. The twin shrinks into a bubble, bottom left |
-| 3 · The coach | 0:14–0:21 | "Then I connected an AI coach to it. It reads my power, heart rate and training load every single day." | What it reads: Power, Heart rate, Training load, Fitness, Fatigue, Form, Race calendar |
-| 4 · The week | 0:21–0:30 | "This week I rode 7 hours and 239 km. Fitness 72. Fatigue 77. Form minus 5." | One number at a time: **7.1 h** → **239 km** → **−5** ("form — almost fresh"), with Fitness 72 / Fatigue 77 |
-| 5 · Verdict | 0:30–0:41 | "The verdict? Keep it light. Stay fresh. If I hold back now, I start my race on 7 November at +14 form. Right in the sweet spot." | **Keep it light. Stay fresh.** Form gauge: the marker moves from −5 today to +14 on race day, inside the +8 to +18 target band |
-| 6 · Payoff | 0:41–0:46 | "And the work is paying off. My one-hour power is up 4% in three months." | 60-min power **+4.3%** (219 W); 1-min power +4.0% |
-| 7 · CTA | 0:46–0:52 | "Garmin, Strava, intervals, and an AI coach on top. Comment COACH and I'll send you my exact setup." | The twin grows back to full frame. Lime box: **Comment "COACH"** |
+Narrated by the local AI voice "Michael" (`am_michael`) at 1.2× speed. Lines are short and punchy, with questions and exclamations, which this voice reads with more energy. Each card lasts exactly as long as its line.
 
-The timings are estimates. Building with `--auto-sync` moves each beat to the pauses in your twin's audio.
+| # | Narrator says | On screen |
+|---|---------------|-----------|
+| 1 · Hook | "Five days before my race, my AI coach told me to back off!" | Full-screen card: **My AI coach told me to BACK OFF.** · "5 days before my A race", tightening on "back off!" |
+| 2 · Setup | "Here's my setup. Garmin and Strava sync every ride into intervals.icu. It tracks fitness, fatigue and form." | Flow: Garmin + Strava → intervals.icu → AI coach |
+| 3 · The coach | "Then I plugged in an AI coach. It reads my power, heart rate and training load. Every single day!" | What it reads: Power, Heart rate, Training load, Fitness, Fatigue, Form, Race calendar |
+| 4 · The week | "This week? Seven hours. 239 K. Fitness 72, fatigue 77, form minus 5." | One number at a time: **7.1 h** → **239 km** → **−5**, with Fitness 72 / Fatigue 77 |
+| 5 · Verdict | "So the verdict? Keep it light, stay fresh! Hold back now, and I hit race day at +14 form. Right in the sweet spot." | **Keep it light. Stay fresh.** The form marker moves from −5 to +14, into the +8 to +18 band |
+| 6 · Payoff | "And it's working! My one-hour power is up 4% in three months." | **+4.3%** 1-hour power; 1-min power +4.0% |
+| 7 · CTA | "Want my exact setup? Comment COACH and I'll send it to you!" | Garmin + Strava + intervals.icu + AI coach, then the lime **Comment "COACH"** box |
+
+The same lines are in `twin_script.txt` for the digital-twin version.
 
 ## Where each number comes from
 
@@ -43,17 +45,10 @@ Form went from −39 to −5 after the lighter days. The coach's call moved from
 2. "I gave an AI my Garmin data. Its instruction five days before my race? Do less."
 3. "Form: minus 5. Race in five days. Here's what my AI coach said."
 
-## Sound
+## Sound and music
 
-Subtle effects mark visible actions:
-- a bass hit on "BACK OFF."
-- a whoosh as the twin shrinks
-- pops for the AI coach pill, the first chip and the CTA
-- a ping when form lands
-- a chime when the marker reaches the sweet spot
-- a sparkle on the power gain
-
-They come from the HyperFrames sound library (Pixabay licence, no attribution needed). There's no music yet: HyperFrames' music catalogue needs a HeyGen sign-in.
+- **Sound effects:** quiet effects mark visible actions: a bass hit on "BACK OFF.", pops, a ping when form lands, a chime at the sweet spot and a sparkle on the power gain. They come from the HyperFrames library (Pixabay licence).
+- **No music in the file:** add a trending song in the Instagram editor (Add audio → pick a track → Mix audio). Set the music to about 15–25% and leave the original audio at 100%, so the voice stays on top. Trending audio also helps reach.
 
 ## Disclosure
 

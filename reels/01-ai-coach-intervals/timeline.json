@@ -15,48 +15,49 @@
       "card": "hook",
       "layout": "overlay",
       "start": 0.0,
-      "say": "My AI coach just told me to back off. Five days before my race.",
-      "caption": "My AI coach just told me to BACK OFF. 5 days before my race."
+      "say": "Five days before my race, my AI coach told me to back off!",
+      "caption": "5 days before my race, my AI coach told me to BACK OFF!",
+      "hold": 0.6
     },
     {
       "id": "pipeline",
       "card": "pipeline",
       "layout": "full",
       "start": 5.6,
-      "say": "Here's the setup. My Garmin and Strava both feed into intervals dot I C U, which turns every ride into fitness, fatigue and form.",
-      "caption": "Here's the setup. Garmin and Strava both feed into intervals.icu, which turns every ride into fitness, fatigue and form."
+      "say": "Here's my setup. Garmin and Strava sync every ride into intervals dot I C U. It tracks fitness, fatigue and form.",
+      "caption": "Here's my setup. Garmin and Strava sync every ride into intervals.icu. It tracks fitness, fatigue and form."
     },
     {
       "id": "coach",
       "card": "coach",
       "layout": "full",
       "start": 14.2,
-      "say": "Then I connected an AI coach to it. It reads my power, heart rate and training load every single day.",
-      "caption": "Then I connected an AI coach to it. It reads my power, heart rate and training load every single day."
+      "say": "Then I plugged in an AI coach. It reads my power, heart rate and training load. Every single day!",
+      "caption": "Then I plugged in an AI coach. It reads my power, heart rate and training load. Every single day!"
     },
     {
       "id": "week",
       "card": "week",
       "layout": "full",
       "start": 21.0,
-      "say": "This week I rode seven hours and two hundred and thirty nine kilometres. Fitness, seventy two. Fatigue, seventy seven. Form, minus five.",
-      "caption": "This week: 7 hours, 239 km. Fitness 72. Fatigue 77. Form minus 5."
+      "say": "This week? Seven hours. Two hundred and thirty nine K. Fitness seventy two, fatigue seventy seven, form minus five.",
+      "caption": "This week? 7 hours. 239 km. Fitness 72, fatigue 77, form minus 5."
     },
     {
       "id": "verdict",
       "card": "verdict",
       "layout": "full",
       "start": 30.4,
-      "say": "The verdict? Keep it light. Stay fresh. If I hold back now, I start my race on the seventh of November at plus fourteen form. Right in the sweet spot.",
-      "caption": "The verdict? Keep it light. Stay fresh. Hold back now and I start race day at +14 form. Right in the sweet spot."
+      "say": "So the verdict? Keep it light, stay fresh! Hold back now, and I hit race day at plus fourteen form. Right in the sweet spot.",
+      "caption": "So the verdict? Keep it light, stay fresh! Hold back now and I hit race day at +14 form. Right in the sweet spot."
     },
     {
       "id": "gains",
       "card": "gains",
       "layout": "full",
       "start": 40.6,
-      "say": "And the work is paying off. My one hour power is up four percent in three months.",
-      "caption": "And the work is paying off. My 1-hour power is up 4% in three months."
+      "say": "And it's working! My one hour power is up four percent in three months.",
+      "caption": "And it's working! My 1-hour power is up 4% in three months."
     },
     {
       "id": "cta",
@@ -64,8 +65,8 @@
       "layout": "overlay",
       "start": 45.8,
       "end": 52.0,
-      "say": "Garmin, Strava, intervals, and an AI coach on top. Comment COACH and I'll send you my exact setup.",
-      "caption": "Garmin + Strava + intervals.icu + an AI coach. Comment COACH and I'll send you my setup."
+      "say": "Want my exact setup? Comment COACH and I'll send it to you!",
+      "caption": "Want my exact setup? Comment COACH and I'll send it to you!"
     }
   ]
 }

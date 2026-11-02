@@ -1,5 +1,8 @@
 # Review: reel 01 in HyperFrames
 
+## Music removed (2 Nov)
+- **Your call:** both hook previews are rendered without the music bed. Music goes on in Instagram instead. `--music` and `tools/make_music.py` stay available. The look-ahead truncation fix (fixed gain in place of loudnorm) still applies if it's used again.
+
 ## Music (2 Nov)
 - **Source:** every music source is blocked here (HeyGen catalogue, Pixabay, Openverse, Hugging Face for MusicGen), so `tools/make_music.py` composes an original track from scratch, with no samples. It's seeded, so it's reproducible. Kick, clap, hats, an eighth-note bass, a plucked i–VI–III–VII arpeggio and a pad, with kick sidechain pumping. The tempo is snapped (103.7 BPM) so the drop and a riser land on the hook→setup cut.
 - **Mix:** the music is normalised to −24 LUFS, then sidechain-compressed by the narration (about 10 dB more under speech, recovering in pauses). It plays as `<audio id="music">` on track 6. The rendered reel measures −16.4 LUFS integrated, −1.5 dBFS true peak, LRA 2.2.

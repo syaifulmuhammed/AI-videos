@@ -1,0 +1,177 @@
+{
+  "title": "Hook option 2: the number flip",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "pip": {
+    "_note": "Where your face sits in the twin video, as fractions of the frame. Used to crop the circle bubble shown over full-screen cards.",
+    "center_x": 0.5,
+    "center_y": 0.3,
+    "size": 0.62
+  },
+  "footage": {
+    "_note": "Your ride clip, cut to the shots of you (the rider in white ahead of the camera), zoomed and following you. track = [seconds into the segment, x, y of your centre as fractions of the frame].",
+    "source": "footage/ride-2026-10-31.mp4",
+    "zoom": 1.5,
+    "subject_y": 0.66,
+    "segments": [
+      {
+        "from": 0.0,
+        "to": 6.5,
+        "track": [
+          [
+            0,
+            0.66,
+            0.44
+          ],
+          [
+            1.6,
+            0.69,
+            0.45
+          ],
+          [
+            2.4,
+            0.72,
+            0.45
+          ],
+          [
+            3.2,
+            0.72,
+            0.45
+          ],
+          [
+            4.0,
+            0.7,
+            0.45
+          ],
+          [
+            4.8,
+            0.68,
+            0.46
+          ],
+          [
+            5.6,
+            0.63,
+            0.47
+          ],
+          [
+            6.5,
+            0.62,
+            0.47
+          ]
+        ]
+      },
+      {
+        "from": 26.2,
+        "to": 29.8,
+        "track": [
+          [
+            0,
+            0.66,
+            0.5
+          ],
+          [
+            0.6,
+            0.68,
+            0.5
+          ],
+          [
+            1.2,
+            0.66,
+            0.5
+          ],
+          [
+            1.8,
+            0.68,
+            0.5
+          ],
+          [
+            2.4,
+            0.7,
+            0.5
+          ],
+          [
+            3.0,
+            0.7,
+            0.5
+          ],
+          [
+            3.6,
+            0.69,
+            0.5
+          ]
+        ]
+      }
+    ],
+    "hook": 6.5,
+    "cards": 0.0,
+    "cta": 0.0,
+    "me": {
+      "label": "THAT'S ME",
+      "x": 36,
+      "y": 760
+    }
+  },
+  "_note": "Hook preview: form -39 rolling to +14. Data: TSB -38.7 on 30 Oct, projected +13.7 on 7 Nov.",
+  "beats": [
+    {
+      "id": "hook",
+      "card": "hook",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "My form? Minus thirty nine. Eight days before my race!",
+      "caption": "My form? Minus 39. 8 days before my race!",
+      "hold": 0.6,
+      "values": {
+        "line": "My form:",
+        "word": "-39",
+        "flipFrom": -39,
+        "flipTo": 14,
+        "pill": "8 days out → race day"
+      }
+    },
+    {
+      "id": "pipeline",
+      "card": "pipeline",
+      "layout": "full",
+      "start": 0.0,
+      "say": "My AI coach fixed it. It reads every ride from Garmin and Strava on intervals dot I C U.",
+      "caption": "My AI coach fixed it. It reads every ride from Garmin and Strava on intervals.icu.",
+      "pace": 0.6
+    },
+    {
+      "id": "verdict",
+      "card": "verdict",
+      "layout": "full",
+      "start": 0.0,
+      "say": "Its call? Back off! Two easy days: minus thirty nine to minus five. Race day? Plus fourteen. Sweet spot.",
+      "caption": "Its call? Back off! Two easy days: minus 39 to minus 5. Race day? +14. Sweet spot.",
+      "pace": 0.85,
+      "hold": 0.3,
+      "values": {
+        "line1": "Reduce load.",
+        "line2": "Stay fresh.",
+        "fromForm": -39,
+        "fromLabel": "30 Oct"
+      }
+    },
+    {
+      "id": "gains",
+      "card": "gains",
+      "layout": "full",
+      "start": 0.0,
+      "say": "And it's working! One hour power, up four percent.",
+      "caption": "And it's working! 1-hour power, up 4%.",
+      "hold": 0.7
+    },
+    {
+      "id": "cta",
+      "card": "cta",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "Want my setup? Comment COACH!",
+      "caption": "Want my setup? Comment COACH!",
+      "hold": 0.9
+    }
+  ]
+}

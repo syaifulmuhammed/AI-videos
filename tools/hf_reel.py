@@ -22,6 +22,7 @@ import hashlib
 import html
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -209,9 +210,13 @@ def make_music_bed(project, total, drop, level=-24.0):
     raw = project / "assets" / "music_raw.wav"
     run([ROOT / ".venv" / "bin" / "python", ROOT / "tools" / "make_music.py", raw,
          "--duration", f"{total:.2f}", "--drop", f"{drop:.2f}"])
+    # Measure, then apply one fixed gain: loudnorm's look-ahead would drop the last ~3 s (the fade).
+    meter = subprocess.run(["ffmpeg", "-hide_banner", "-i", raw, "-af", "ebur128=framelog=quiet", "-f", "null", "-"],
+                           capture_output=True, text=True).stderr
+    measured = float(re.findall(r"I:\s+(-?[\d.]+) LUFS", meter)[-1])
     run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", raw, "-i", project / "assets" / "narration.wav",
          "-filter_complex",
-         f"[0:a]loudnorm=I={level}:TP=-3:LRA=11[m];[1:a]aformat=channel_layouts=stereo[k];"
+         f"[0:a]volume={level - measured:.2f}dB[m];[1:a]aformat=channel_layouts=stereo[k];"
          "[m][k]sidechaincompress=threshold=0.015:ratio=6:attack=15:release=350:makeup=1[out]",
          "-map", "[out]", "-t", f"{total:.2f}", "-ar", "48000", project / "assets" / "music.wav"])
     raw.unlink()
@@ -286,6 +291,7 @@ def write_index(project, beats, tl, data, total, voice=None, footage_len=None, m
     for b in beats:
         if "pace" in b:
             values.setdefault(b["card"], {})["pace"] = b["pace"]
+        values.setdefault(b["card"], {}).update(b.get("values", {}))  # per-cut wording and numbers
     hosts = sfx_tags(beats, total, voice)
     for b in beats:
         overlay = LAYOUT.get(b["card"]) == "overlay"
@@ -478,6 +484,7 @@ def main():
     ap.add_argument("--auto-sync", action="store_true", help="align beats to the pauses in the twin's audio")
     ap.add_argument("--render", action="store_true", help="check, then render the reel")
     ap.add_argument("--out", type=Path, help="render path (default <reel>/out/reel_hyperframes.mp4)")
+    ap.add_argument("--quality", default="delivery", help="render quality: draft for quick previews, delivery for posting")
     a = ap.parse_args()
 
     reel = a.reel.resolve()
@@ -533,7 +540,7 @@ def main():
         subprocess.run([HF, "check"], cwd=project, env=env, check=True)
         out = (a.out or reel / "out" / "reel_hyperframes.mp4").resolve()
         out.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run([HF, "render", "-o", out, "-q", "delivery"], cwd=project, env=env, check=True)
+        subprocess.run([HF, "render", "-o", out, "-q", a.quality], cwd=project, env=env, check=True)
         print(f"wrote {out}")
 
 

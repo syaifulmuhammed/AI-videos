@@ -68,5 +68,11 @@
       "say": "Want my exact setup? Comment COACH and I'll send it to you!",
       "caption": "Want my exact setup? Comment COACH and I'll send it to you!"
     }
-  ]
+  ],
+  "footage": {
+    "_note": "Seconds into your ride video where each part starts: hook and cta should open on your face.",
+    "hook": 20.3,
+    "cards": 0.0,
+    "cta": 8.6
+  }
 }

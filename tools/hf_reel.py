@@ -4,6 +4,7 @@
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --twin twin.mp4 --auto-sync --render
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --placeholder --render
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --voice am_michael --speed 1.2 --render
+  python3 tools/hf_reel.py reels/01-ai-coach-intervals --voice am_michael --footage ride.mp4 --render
 
 The scenes in <reel>/hyperframes/compositions/ are hand-written and never touched here.
 This script writes only the parts that follow from data: assets/twin.mp4 or
@@ -11,7 +12,9 @@ assets/narration.wav, index.html (scene timings, the numbers each scene shows, t
 move into the bubble) and compositions/captions.html.
 
 With --voice there is no presenter: a local Kokoro voice reads each beat's `say` line,
-every card fills the screen, and each beat lasts exactly as long as its line.
+every card fills the screen, and each beat lasts exactly as long as its line. Add --footage
+to play your own phone footage underneath: the hook and CTA show it full frame (pick the
+moments with your face in timeline.json "footage"), and the data cards sit on dark glass over it.
 """
 import argparse
 import hashlib
@@ -126,6 +129,40 @@ def make_voiceover(project, build, tl, voice, speed=1.0):
     return total
 
 
+def prepare_footage(src, dest, tl):
+    """Upright, canvas-sized, silent, a keyframe every second (seeking never freezes)."""
+    w, h, fps = tl["width"], tl["height"], tl["fps"]
+    run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", src,
+         "-vf", f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},fps={fps},format=yuv420p",
+         "-c:v", "libx264", "-crf", "25", "-preset", "slow", "-g", str(fps), "-an", "-movflags", "+faststart", dest])
+
+
+def footage_tags(beats, tl, total, length):
+    """One muted clip per overlay beat (its own moment) and one per run of data cards, slowed if the footage runs short."""
+    plan = tl.get("footage", {})
+    tags, script, runs, cur = [], [], [], None
+    for b in beats:
+        if LAYOUT.get(b["card"]) == "overlay":
+            runs.append((b["card"], b["start"], b["end"], plan.get(b["card"], 0.0)))
+            cur = None
+        elif cur is None:
+            cur = [f"cards{len(runs)}", b["start"], b["end"], plan.get("cards", 0.0)]
+            runs.append(cur)
+        else:
+            cur[2] = b["end"]
+    for name, start, end, media_start in runs:
+        dur = end - start
+        rate = max(0.5, min(1.0, (length - media_start) / dur))
+        rate_attr = f' data-playback-rate="{rate:.3f}"' if rate < 1 else ""
+        tags.append(f'<div id="ride-{name}-wrap" class="ride-wrap">\n'
+                    f'        <video id="ride-{name}" class="clip" src="assets/ride.mp4" data-start="{start:.2f}" data-duration="{dur:.2f}"\n'
+                    f'          data-media-start="{media_start:.2f}"{rate_attr} data-track-index="0" muted playsinline></video>\n'
+                    f'      </div>')
+    if runs and runs[0][0] == "hook":
+        script.append(f'tl.set("#ride-hook-wrap", {{ scale: {PUNCH_IN[1]}, transformOrigin: "50% 60%" }}, {PUNCH_IN[0]});')
+    return tags, script
+
+
 def reframe_script(beats, tl, total):
     """Root-timeline tweens: the twin shrinks into the bubble for each run of full-screen cards."""
     pip = tl["pip"]
@@ -177,9 +214,14 @@ def sfx_tags(beats, total, voice):
     return tags
 
 
-def write_index(project, beats, tl, data, total, voice=None):
+def write_index(project, beats, tl, data, total, voice=None, footage_len=None):
     values = scene_values(data)
-    if voice:
+    if voice and footage_len:
+        # Your face carries the hook and CTA, so they keep the over-the-presenter layout.
+        for card in LAYOUT:
+            values[card]["tag"] = "AI-generated voiceover"
+        values["cta"]["boxTop"] = 270  # the face fills the lower half of the selfie shots
+    elif voice:
         for card in LAYOUT:
             values[card]["mode"] = "card"
     hosts = sfx_tags(beats, total, voice)
@@ -191,9 +233,11 @@ def write_index(project, beats, tl, data, total, voice=None):
             f'        data-start="{b["start"]:.2f}" data-duration="{b["end"] - b["start"]:.2f}" data-track-index="{2 if overlay else 1}"\n'
             f'        data-track-kind="graphics" data-width="{tl["width"]}" data-height="{tl["height"]}"\n'
             f'        data-variable-values="{vv}" style="z-index: {30 if overlay else 10}"></div>')
+    footage, footage_script = footage_tags(beats, tl, total, footage_len) if footage_len else ([], [])
     if voice:
         presenter = (f'<audio id="narration" class="clip" src="assets/narration.wav" data-start="0" data-duration="{total:.2f}"\n'
                      f'        data-track-index="0" data-volume="1"></audio>')
+        presenter = "\n      ".join([presenter, *footage])
     else:
         presenter = (f'<div id="twin-frame">\n'
                      f'        <video id="twin" class="clip" src="assets/twin.mp4" data-start="0" data-duration="{total:.2f}"\n'
@@ -202,7 +246,7 @@ def write_index(project, beats, tl, data, total, voice=None):
                      f'      </div>')
     doc = f"""<!doctype html>
 <!-- Written by tools/hf_reel.py from timeline.json and data.json: edit those, or the scenes in compositions/. -->
-<html lang="en" data-resolution="portrait">
+<html lang="en" data-resolution="portrait"{' class="footage"' if footage_len else ''}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width={tl['width']}, height={tl['height']}" />
@@ -231,6 +275,20 @@ def write_index(project, beats, tl, data, total, voice=None):
         height: {tl['height']}px;
         object-fit: cover;
       }}
+      .ride-wrap {{
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        overflow: hidden;
+      }}
+      .ride-wrap video {{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: {tl['width']}px;
+        height: {tl['height']}px;
+        object-fit: cover;
+      }}
       #twin-ring {{
         position: absolute;
         box-sizing: border-box;
@@ -252,7 +310,7 @@ def write_index(project, beats, tl, data, total, voice=None):
     </div>
     <script>
       const tl = gsap.timeline({{ paused: true }});
-      {"" if voice else reframe_script(beats, tl, total)}
+      {chr(10).join(footage_script) if voice else reframe_script(beats, tl, total)}
       window.__timelines["main"] = tl;
     </script>
   </body>
@@ -271,9 +329,11 @@ def caption_markup(text):
     return " ".join(out)
 
 
-def write_captions(project, beats, tl, total):
+def write_captions(project, beats, tl, total, skip=()):
+    """Caption groups for every beat except those in `skip` (cards that already show their line in big type)."""
     groups, tweens = [], []
     timed = [dict(b, start=b["speech"][0] - 0.1, end=b["speech"][1] + 0.25) if "speech" in b else b for b in beats]
+    timed = [b for b in timed if b["card"] not in skip]
     for i, (a, b, text) in enumerate(caption_events(timed)):
         b = min(b, total)
         groups.append(
@@ -346,6 +406,7 @@ def main():
     src.add_argument("--twin", type=Path, help="9:16 video of your digital twin reading twin_script.txt")
     src.add_argument("--placeholder", action="store_true", help="use a stand-in presenter")
     src.add_argument("--voice", help="no presenter: narrate with this local Kokoro voice (e.g. am_michael)")
+    ap.add_argument("--footage", type=Path, help="with --voice: your own video to play under the cards (hook and CTA show it full frame)")
     ap.add_argument("--speed", type=float, default=1.2, help="narration speed for --voice (default 1.2: reels want a brisk read)")
     ap.add_argument("--auto-sync", action="store_true", help="align beats to the pauses in the twin's audio")
     ap.add_argument("--render", action="store_true", help="check, then render the reel")
@@ -363,6 +424,10 @@ def main():
         total = make_voiceover(project, build, tl, a.voice, a.speed)
         beats = tl["beats"]
         (project / "assets" / "twin.mp4").unlink(missing_ok=True)
+        if a.footage:
+            prepare_footage(a.footage.resolve(), project / "assets" / "ride.mp4", tl)
+        elif (project / "assets" / "ride.mp4").exists() and not tl.get("footage"):
+            (project / "assets" / "ride.mp4").unlink()
     else:
         if a.twin:
             source = a.twin.resolve()
@@ -384,8 +449,10 @@ def main():
         if not (sfx_out / src_file.name).exists():
             shutil.copy(src_file, sfx_out / src_file.name)
 
-    write_index(project, beats, tl, data, total, a.voice)
-    write_captions(project, beats, tl, total)
+    ride = project / "assets" / "ride.mp4"
+    footage_len = probe_duration(ride) if a.voice and (a.footage or tl.get("footage")) and ride.exists() else None
+    write_index(project, beats, tl, data, total, a.voice, footage_len)
+    write_captions(project, beats, tl, total, skip=LAYOUT if footage_len else ())
     print(f"wrote {project / 'index.html'} and compositions/captions.html ({total:.1f}s, {len(beats)} beats)")
 
     if a.render:

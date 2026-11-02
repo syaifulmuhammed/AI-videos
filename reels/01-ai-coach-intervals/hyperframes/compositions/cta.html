@@ -4,6 +4,8 @@
   data-composition-id="cta"
   data-composition-variables='[
     { "id": "keyword", "type": "string", "label": "Comment keyword", "default": "COACH" },
+    { "id": "tag", "type": "string", "label": "Disclosure tag", "default": "" },
+    { "id": "boxTop", "type": "number", "label": "Box top (px)", "default": 880, "step": 10 },
     { "id": "mode", "type": "enum", "label": "Layout", "default": "presenter", "options": [{ "value": "presenter", "label": "Over the presenter" }, { "value": "card", "label": "Full-screen card (voiceover)" }] }
   ]'
 >
@@ -90,6 +92,8 @@
           (function () {
             var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
             document.getElementById("cta-key").textContent = v.keyword || "COACH";
+            if (v.tag) document.getElementById("cta-tag").textContent = v.tag;
+            if (v.boxTop != null) document.getElementById("cta-box").style.top = v.boxTop + "px";
             var card = v.mode === "card";
             if (card) {
               document.getElementById("root").classList.add("card-mode");

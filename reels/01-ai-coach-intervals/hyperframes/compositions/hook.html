@@ -5,6 +5,7 @@
   data-composition-variables='[
     { "id": "days", "type": "number", "label": "Days to race", "default": 5, "min": 1, "step": 1 },
     { "id": "word", "type": "string", "label": "Slam word", "default": "BACK OFF." },
+    { "id": "tag", "type": "string", "label": "Disclosure tag", "default": "" },
     { "id": "mode", "type": "enum", "label": "Layout", "default": "presenter", "options": [{ "value": "presenter", "label": "Over the presenter" }, { "value": "card", "label": "Full-screen card (voiceover)" }] }
   ]'
 >
@@ -105,6 +106,7 @@
             var vars = window.__hyperframes ? window.__hyperframes.getVariables() : {};
             document.getElementById("hook-days-n").textContent = vars.days != null ? vars.days : 5;
             if (vars.word) document.getElementById("hook-stop").textContent = vars.word;
+            if (vars.tag) document.getElementById("hook-tag").textContent = vars.tag;
             var card = vars.mode === "card";
             if (card) {
               document.getElementById("root").classList.add("card-mode");

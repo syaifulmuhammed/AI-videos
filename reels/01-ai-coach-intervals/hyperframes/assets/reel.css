@@ -85,3 +85,14 @@
   font-weight: 700;
   color: #fff;
 }
+
+/* Footage version (index.html carries class "footage"): the ride plays behind every card,
+   so grounds become a dark scrim and panels become dark glass over it. */
+html.footage .r-ground {
+  background: linear-gradient(180deg, rgba(11, 15, 20, 0.82) 0%, rgba(11, 15, 20, 0.7) 45%, rgba(11, 15, 20, 0.9) 100%);
+}
+
+html.footage .r-box {
+  background: rgba(15, 16, 22, 0.78);
+  backdrop-filter: blur(22px);
+}

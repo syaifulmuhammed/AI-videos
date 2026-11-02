@@ -1,5 +1,12 @@
 # Review: reel 01 in HyperFrames
 
+## Your ride footage (2 Nov)
+- **The footage:** your 31 Oct group-ride clip (`assets/ride.mp4`, made upright, 1080×1920, a keyframe every second, muted) plays under the whole reel. The hook opens on the steady selfie stretch (from 20.3 s), so your real face is the thumbnail. The data cards sit on a dark scrim with glass panels over the ride, at 0.91× so the 29.8 s clip covers all 32.8 s of cards. The CTA returns to the selfie (from 8.6 s).
+- **Layout around your face:** the hook and CTA keep the over-the-presenter layout. The CTA box moves to the top (270 px), and those two beats have no captions, because the face fills the lower half and their cards already show the line in big type.
+- **Tag:** "AI-generated voiceover" (the footage is real). The ride's own audio is wind noise, so it is left out.
+- **Punch-in:** the hook punch-in (1.08×) now lands on the footage at "back off!".
+- **Size:** `out/reel_footage.mp4` is about 35 MB at delivery quality, fine for Instagram.
+
 ## Punchier voiceover (2 Nov)
 - **Feedback:** the first narration felt flat for a reel. The script is rewritten into short lines with questions and exclamations, and read faster (`--speed 1.2`). The gaps between lines are cut to 0.3 s, plus a 0.6 s beat after the hook so its card meets the reading floor. The reel went from 58 s to 42.5 s.
 - **Retimed scenes:** week, verdict, gains, CTA and the hook punch-in are retimed to the faster read, so every number lands while it is spoken (checked against the caption timing on a phone-width review sheet).

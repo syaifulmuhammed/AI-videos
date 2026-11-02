@@ -110,7 +110,8 @@
       "label": "THAT'S ME",
       "x": 36,
       "y": 760
-    }
+    },
+    "grade": "eq=brightness=-0.07:contrast=1.08:saturation=1.05"
   },
   "_note": "Short cut: hook, setup, verdict, payoff, CTA. Build with --timeline timeline_25s.json.",
   "beats": [

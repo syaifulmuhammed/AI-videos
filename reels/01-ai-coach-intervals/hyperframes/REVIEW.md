@@ -1,5 +1,11 @@
 # Review: reel 01 in HyperFrames
 
+## Clean look: one font, no boxes (2 Nov)
+- **One type system:** every word on screen is Montserrat (400–900, SIL OFL, `assets/fonts/`, declared in `reel.css`), in butter yellow (`--ink` and `--lime` are both #FFE68F). Highlights (Stay fresh., +4.3%, caption numbers) are white. Form keeps its meaning colours: red, amber and green.
+- **No dark layers:** in footage mode the scrim, panels, disclosure tag background, box borders and caption outline are all gone. The butter pills (the 381/183 pill, THAT'S ME, AI coach, Comment COACH) stay, as they aren't dark.
+- **Legibility without boxes:** a three-layer soft text shadow, bold full-strength secondary lines, and a gentle footage grade (`footage.grade`: `eq=brightness=-0.07:contrast=1.08:saturation=1.05`). HyperFrames still reports 19 contrast warnings (median about 2.1:1 against bright sky). They're kept on purpose because they come with the no-box look, and the snapshots read on a phone-width check. If any line doesn't read on your phone, the fix is a darker grade or bringing back a soft scrim.
+- **Hook type:** the line is set at 52 px with a deliberate break, and the slam word at 136 px, so the hook clears your helmet.
+
 ## Caption style (2 Nov)
 - **The look:** no background box. Butter yellow (#FFE68F) in Montserrat Black, all caps, with a 9 px dark outline painted behind the fill and a soft drop shadow, so it reads over bright road and sky. That's the heavy-caps style popular in CapCut and on creator reels. Numbers and SHOUTED words switch to white.
 - **Entrance:** each group pops in (scale 0.82 → 1, 0.18 s, slight overshoot) in place of the earlier blur-in.

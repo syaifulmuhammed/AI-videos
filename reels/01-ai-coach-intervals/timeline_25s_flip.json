@@ -110,7 +110,8 @@
       "label": "THAT'S ME",
       "x": 36,
       "y": 760
-    }
+    },
+    "grade": "eq=brightness=-0.07:contrast=1.08:saturation=1.05"
   },
   "_note": "Hook preview: form -39 rolling to +14. Data: TSB -38.7 on 30 Oct, projected +13.7 on 7 Nov.",
   "beats": [

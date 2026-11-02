@@ -154,6 +154,7 @@ def prepare_footage(src, dest, tl):
              "-vf", f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},fps={fps},format=yuv420p", *enc])
         return
     z, sy = plan.get("zoom", 1.0), plan.get("subject_y", 0.5)
+    grade = plan["grade"] + "," if plan.get("grade") else ""  # e.g. a gentle darken so text pops without a scrim
     chains = []
     for i, seg in enumerate(plan["segments"]):
         cx, cy = lerp_expr(seg["track"], 1), lerp_expr(seg["track"], 2)
@@ -161,7 +162,7 @@ def prepare_footage(src, dest, tl):
         chains.append(
             f"[0:v]trim={seg['from']}:{seg['to']},setpts=PTS-STARTPTS,"
             f"crop=w={cw}:h={ch}:x='clip(({cx})*iw-ow/2,0,iw-ow)':y='clip(({cy})*ih-oh*{sy},0,ih-oh)',"
-            f"scale={w}:{h}:flags=lanczos,unsharp=5:5:0.5,fps={fps},format=yuv420p,setsar=1[s{i}]")
+            f"scale={w}:{h}:flags=lanczos,unsharp=5:5:0.5,{grade}fps={fps},format=yuv420p,setsar=1[s{i}]")
     n = len(chains)
     graph = ";".join(chains) + ";" + "".join(f"[s{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[v]"
     run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", src, "-filter_complex", graph, "-map", "[v]", *enc])
@@ -444,7 +445,7 @@ def write_captions(project, beats, tl, total, skip=()):
             text-align: center;
             overflow: visible;
           }}
-          /* No box: butter-yellow letters held off the footage by a dark outline and a soft drop shadow. */
+          /* No box, no outline: butter-yellow letters held off the footage by a soft shadow only. */
           .cap-t {{
             display: inline-block;
             padding: 0 30px;
@@ -455,9 +456,7 @@ def write_captions(project, beats, tl, total, skip=()):
             letter-spacing: 0.01em;
             text-transform: uppercase;
             color: #ffe68f;
-            -webkit-text-stroke: 9px #14110a;
-            paint-order: stroke fill;
-            text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6), 0 0 28px rgba(0, 0, 0, 0.65);
             transform-origin: 50% 60%;
           }}
           .cap-k {{

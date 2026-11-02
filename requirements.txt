@@ -1,1 +1,4 @@
 yt-dlp==2026.10.26
+# Local AI voiceover for `hf_reel.py --voice` (HyperFrames tts / Kokoro-82M)
+kokoro-onnx==0.6.1
+soundfile==0.14.0

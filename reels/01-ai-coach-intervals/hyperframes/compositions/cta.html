@@ -3,7 +3,8 @@
   lang="en"
   data-composition-id="cta"
   data-composition-variables='[
-    { "id": "keyword", "type": "string", "label": "Comment keyword", "default": "COACH" }
+    { "id": "keyword", "type": "string", "label": "Comment keyword", "default": "COACH" },
+    { "id": "mode", "type": "enum", "label": "Layout", "default": "presenter", "options": [{ "value": "presenter", "label": "Over the presenter" }, { "value": "card", "label": "Full-screen card (voiceover)" }] }
   ]'
 >
   <body>
@@ -27,6 +28,37 @@
             text-align: center;
             font-family: var(--font);
           }
+          #root.card-mode #cta-box {
+            top: 800px;
+          }
+          .cta-card-only {
+            display: none;
+          }
+          #root.card-mode .cta-card-only {
+            display: block;
+          }
+          #cta-stack {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 300px;
+            font-family: var(--font);
+          }
+          .cta-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 22px;
+            font-size: 64px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+          }
+          .cta-plus {
+            width: 64px;
+            text-align: center;
+            color: var(--lime);
+          }
           #cta-ask {
             font-size: 42px;
             font-weight: 700;
@@ -40,7 +72,14 @@
         </style>
 
         <div id="cta-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground cta-card-only"></div>
           <div id="cta-tag" class="r-tag">AI-generated digital twin</div>
+          <div id="cta-stack" class="cta-card-only">
+            <div class="cta-row"><span class="cta-plus"></span>Garmin</div>
+            <div class="cta-row"><span class="cta-plus">+</span>Strava</div>
+            <div class="cta-row"><span class="cta-plus">+</span>intervals.icu</div>
+            <div class="cta-row" style="color: var(--lime)"><span class="cta-plus">+</span>AI coach</div>
+          </div>
           <div id="cta-box">
             <div id="cta-ask">Want my exact setup?</div>
             <div id="cta-word">Comment &ldquo;<span id="cta-key">COACH</span>&rdquo;</div>
@@ -51,11 +90,23 @@
           (function () {
             var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
             document.getElementById("cta-key").textContent = v.keyword || "COACH";
+            var card = v.mode === "card";
+            if (card) {
+              document.getElementById("root").classList.add("card-mode");
+              document.getElementById("cta-tag").textContent = "AI-generated voiceover";
+            }
 
             var tl = gsap.timeline({ paused: true });
             tl.fromTo("#cta-tag", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.6);
             // Arrives as "Comment COACH" is said, on a premium spring, then holds still.
-            tl.fromTo("#cta-box", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, 2.6);
+            // The narrator says "Comment COACH" about a second later than the twin script was timed for.
+            tl.fromTo("#cta-box", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.4)" }, card ? 3.6 : 2.6);
+            if (card) {
+              // The four parts land as they are named: "Garmin, Strava, intervals, and an AI coach on top."
+              gsap.utils.toArray("#cta-stack .cta-row").forEach(function (row, i) {
+                tl.fromTo(row, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, 0.2 + i * 0.75);
+              });
+            }
             window.__timelines["cta"] = tl;
           })();
         </script>

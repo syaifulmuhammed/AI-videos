@@ -4,7 +4,8 @@
   data-composition-id="hook"
   data-composition-variables='[
     { "id": "days", "type": "number", "label": "Days to race", "default": 5, "min": 1, "step": 1 },
-    { "id": "word", "type": "string", "label": "Slam word", "default": "BACK OFF." }
+    { "id": "word", "type": "string", "label": "Slam word", "default": "BACK OFF." },
+    { "id": "mode", "type": "enum", "label": "Layout", "default": "presenter", "options": [{ "value": "presenter", "label": "Over the presenter" }, { "value": "card", "label": "Full-screen card (voiceover)" }] }
   ]'
 >
   <body>
@@ -41,6 +42,40 @@
             color: var(--red);
             transform-origin: 0% 60%;
           }
+          /* Voiceover version: no presenter, so the hook is a full-screen card. */
+          .hook-card-only {
+            display: none;
+          }
+          #root.card-mode .hook-card-only {
+            display: block;
+          }
+          #root.card-mode #hook-box {
+            top: 560px;
+            padding: 44px 48px 48px;
+            background: var(--panel);
+            border: 3px solid var(--line);
+          }
+          #root.card-mode #hook-line {
+            font-size: 68px;
+          }
+          #root.card-mode #hook-stop {
+            font-size: 146px;
+          }
+          #hook-label {
+            position: absolute;
+            left: 84px;
+            top: 480px;
+          }
+          #hook-race {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 1040px;
+            font-family: var(--font);
+            font-size: 34px;
+            font-weight: 700;
+            color: var(--muted);
+          }
           #hook-days {
             display: inline-block;
             margin-top: 18px;
@@ -54,12 +89,15 @@
         </style>
 
         <div id="hook-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground hook-card-only"></div>
           <div id="hook-tag" class="r-tag">AI-generated digital twin</div>
+          <div id="hook-label" class="r-label hook-card-only">AI coach &middot; intervals.icu</div>
           <div id="hook-box">
             <div id="hook-line">My AI coach told me to</div>
             <div id="hook-stop">BACK OFF.</div>
             <div id="hook-days"><span id="hook-days-n">5</span> days before my A race</div>
           </div>
+          <div id="hook-race" class="hook-card-only">Masters TT &middot; 7 Nov</div>
         </div>
 
         <script>
@@ -67,12 +105,22 @@
             var vars = window.__hyperframes ? window.__hyperframes.getVariables() : {};
             document.getElementById("hook-days-n").textContent = vars.days != null ? vars.days : 5;
             if (vars.word) document.getElementById("hook-stop").textContent = vars.word;
+            var card = vars.mode === "card";
+            if (card) {
+              document.getElementById("root").classList.add("card-mode");
+              document.getElementById("hook-tag").textContent = "AI-generated voiceover";
+            }
 
             // Frame 0 is the thumbnail: the whole line is already on screen.
             // STOP lands from slightly large, then everything holds still.
             var tl = gsap.timeline({ paused: true });
             tl.fromTo("#hook-stop", { scale: 1.14 }, { scale: 1, duration: 0.45, ease: "expo.out" }, 0.05);
             tl.fromTo("#hook-days", { opacity: 0.0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power4.out" }, 0.55);
+            if (card) {
+              // No face to punch in on: the card itself cuts tighter at "Five days before my race".
+              tl.set("#hook-box", { scale: 1.05, transformOrigin: "50% 50%" }, 2.9);
+              tl.fromTo("#hook-race", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 2.9);
+            }
             window.__timelines["hook"] = tl;
           })();
         </script>

@@ -1,7 +1,7 @@
 # Reel 01: "My AI coach told me to back off"
 
 **Format:** Instagram Reel, 9:16, about 50 seconds
-**Presenter:** your AI digital twin, speaking to camera
+**Presenter:** an AI voiceover (Kokoro voice "Michael") over full-screen cards. The digital-twin version is still buildable with `--twin`
 **Story:** the AI coach reads your Garmin and Strava data through intervals.icu. Five days before your A race, it tells you to keep the load low. Then it shows why: you'll arrive at the race fresh, and your power is going up.
 **Data:** your real intervals.icu numbers for 27 Oct–2 Nov 2026, pulled on 2 Nov (see `data.json`).
 
@@ -57,4 +57,4 @@ They come from the HyperFrames sound library (Pixabay licence, no attribution ne
 
 ## Disclosure
 
-The presenter is an AI-generated version of you. The hook and CTA cards carry a small "AI-generated digital twin" tag. When you post, also turn on Instagram's **AI info** label (Advanced settings → "Add AI label"). Meta asks for this on realistic AI-generated video.
+The narration is an AI-generated voice. The hook and CTA cards carry a small "AI-generated voiceover" tag (or "AI-generated digital twin" in the twin version). When you post, also turn on Instagram's **AI info** label (Advanced settings → "Add AI label"). Meta asks for this on realistic AI-generated video.

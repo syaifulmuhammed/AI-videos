@@ -12,7 +12,7 @@ The good news: my 1-hour power is up 4% in the last three months 📈
 
 🔧 Tip: connect Garmin to intervals.icu directly, not only through Strava. Rides that reach intervals.icu via Strava can't be passed on to other apps through the API, so an AI coach may not see them.
 
-(The presenter in this video is my AI digital twin 🤖)
+(The voiceover in this video is AI-generated 🤖)
 
 #cycling #intervalsicu #garmin #strava #aicoach #masterscycling #powermeter #cyclingoman #omancycling #endurancetraining #digitaltwin
 

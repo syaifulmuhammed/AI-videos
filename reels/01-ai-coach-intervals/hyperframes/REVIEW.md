@@ -1,5 +1,12 @@
 # Review: reel 01 in HyperFrames
 
+## Voiceover version (2 Nov)
+- **Narrator:** no presenter. The free local Kokoro voice `am_michael` reads each beat's `say` line. You chose it from four samples in `voice-samples/`. HeyGen voices needed a sign-in and are blocked in this environment.
+- **Timing:** each beat lasts exactly as long as its line (0.45 s gaps, 1.6 s tail). Captions run inside each line's measured window, not estimates. Without word timestamps, the timing within a line is still proportional to character count.
+- **Hook and CTA:** both have a `mode: card` layout: a full-screen ground, a label, and the four tools listing in as they're named. The CTA box lands at 3.6 s to meet "Comment COACH".
+- **Measured, not heard:** narration is loudness-normalised to −16 LUFS. Michael is slower than the twin estimates, so some reveals in the week and pipeline scenes lead the words by about a second.
+- **Labels:** `.r-label` now sets its own font, so labels outside the data scenes no longer fall back to serif.
+
 ## 2 Nov update
 - **Numbers:** refreshed from intervals.icu: form −5 (was −39), race in 5 days, +14 on race day, 60-min power +4.3%. The coach's call is now "maintain reduced load and freshness", so the hook says "BACK OFF." and the verdict reads "Keep it light. Stay fresh."
 - **Colours follow the data:** form uses intervals.icu's bands (red only under −30). The verdict hides its "0" label when today's marker sits next to it. The second power result is 1-min power, because 20-min power was flat.

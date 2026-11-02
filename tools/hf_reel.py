@@ -3,13 +3,18 @@
 
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --twin twin.mp4 --auto-sync --render
   python3 tools/hf_reel.py reels/01-ai-coach-intervals --placeholder --render
+  python3 tools/hf_reel.py reels/01-ai-coach-intervals --voice am_michael --render
 
 The scenes in <reel>/hyperframes/compositions/ are hand-written and never touched here.
-This script writes only the parts that follow from data: assets/twin.mp4, index.html
-(scene timings, the numbers each scene shows, the twin's move into the bubble) and
-compositions/captions.html.
+This script writes only the parts that follow from data: assets/twin.mp4 or
+assets/narration.wav, index.html (scene timings, the numbers each scene shows, the twin's
+move into the bubble) and compositions/captions.html.
+
+With --voice there is no presenter: a local Kokoro voice reads each beat's `say` line,
+every card fills the screen, and each beat lasts exactly as long as its line.
 """
 import argparse
+import hashlib
 import html
 import json
 import os
@@ -26,6 +31,7 @@ HF = ROOT / "node_modules" / ".bin" / "hyperframes"
 SFX_DIR = ROOT / ".claude" / "skills" / "media-use" / "audio" / "assets" / "sfx"
 BUBBLE = (200, 1470, 130)  # centre x, centre y, radius of the twin bubble over full-screen cards
 LAYOUT = {"hook": "overlay", "cta": "overlay"}  # every other scene is a full-screen card
+VOICE_LEAD, VOICE_GAP, VOICE_TAIL = 0.15, 0.45, 1.6  # seconds before the first line, between lines, after the last
 PUNCH_IN = (2.75, 1.08)  # hard punch-in on the twin at "Five days before my race": time, scale
 # Sound effects on visible actions, from the HyperFrames media-use library (Pixabay licence):
 # (seconds after the scene starts, file in assets/sfx, volume). Kept well under the voice.
@@ -36,7 +42,7 @@ SFX = {
     "week": [(8.25, "ping", 0.3)],
     "verdict": [(7.6, "chime", 0.3)],
     "gains": [(3.05, "sparkle", 0.3)],
-    "cta": [(-0.6, "whoosh-short", 0.3), (2.6, "pop", 0.45)],
+    "cta": [(-0.6, "whoosh-short", 0.3), (2.6, "pop", 0.45)],  # voiceover cards move the pop to 3.6 (see sfx_tags)
 }
 
 
@@ -83,6 +89,43 @@ def prepare_twin(src, dest, tl):
          "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", dest])
 
 
+def make_voiceover(project, build, tl, voice):
+    """Speak each beat's line with Kokoro, lay the lines end to end, and time the beats to them.
+
+    Returns the total length; sets each beat's start and end, plus `speech` (start, end) for captions.
+    """
+    env = dict(os.environ, HYPERFRAMES_NO_TELEMETRY="1")
+    venv_python = ROOT / ".venv" / "bin" / "python"
+    if venv_python.exists():
+        env.setdefault("HYPERFRAMES_PYTHON", str(venv_python))
+    cache = build / "vo"
+    cache.mkdir(parents=True, exist_ok=True)
+    t, clips = VOICE_LEAD, []
+    for b in tl["beats"]:
+        key = hashlib.sha1(f"{voice}|{b['say']}".encode()).hexdigest()[:12]
+        wav = cache / f"{b['id']}-{key}.wav"
+        if not wav.exists():
+            subprocess.run([HF, "tts", b["say"], "-v", voice, "-o", wav, "--json"], env=env, check=True, capture_output=True)
+        d = probe_duration(wav)
+        b["start"] = 0.0 if not clips else round(t - VOICE_GAP / 2, 2)
+        b["speech"] = (t, t + d)
+        clips.append((wav, t))
+        t += d + VOICE_GAP
+    total = round(t - VOICE_GAP + VOICE_TAIL, 2)
+    for i, b in enumerate(tl["beats"]):
+        b["end"] = tl["beats"][i + 1]["start"] if i + 1 < len(tl["beats"]) else total
+
+    inputs, chains = [], []
+    for i, (wav, at) in enumerate(clips):
+        inputs += ["-i", wav]
+        chains.append(f"[{i}:a]adelay={int(at * 1000)}:all=1[a{i}]")
+    mix = "".join(f"[a{i}]" for i in range(len(clips)))
+    run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", *inputs, "-filter_complex",
+         ";".join(chains) + f";{mix}amix=inputs={len(clips)}:normalize=0,apad,loudnorm=I=-16:TP=-1.5:LRA=11[out]",
+         "-map", "[out]", "-t", f"{total:.2f}", "-ar", "48000", "-ac", "1", project / "assets" / "narration.wav"])
+    return total
+
+
 def reframe_script(beats, tl, total):
     """Root-timeline tweens: the twin shrinks into the bubble for each run of full-screen cards."""
     pip = tl["pip"]
@@ -119,11 +162,15 @@ def reframe_script(beats, tl, total):
     return "\n      ".join(lines)
 
 
-def sfx_tags(beats, total):
+def sfx_tags(beats, total, voice):
     """Timed <audio> clips for SFX, each lasting exactly its file."""
     tags = []
     for b in beats:
         for offset, name, volume in SFX.get(b["card"], []):
+            if voice and offset < 0:
+                continue  # that whoosh belongs to the twin growing back, which has no voiceover equivalent
+            if voice and b["card"] == "cta" and name == "pop":
+                offset = 3.6  # the CTA box lands later when narrated (compositions/cta.html)
             at = b["start"] + offset
             if offset < b["end"] - b["start"] and 0 <= at < total - 0.5:
                 length = min(probe_duration(SFX_DIR / f"{name}.mp3"), total - at)
@@ -132,9 +179,12 @@ def sfx_tags(beats, total):
     return tags
 
 
-def write_index(project, beats, tl, data, total):
+def write_index(project, beats, tl, data, total, voice=None):
     values = scene_values(data)
-    hosts = sfx_tags(beats, total)
+    if voice:
+        for card in LAYOUT:
+            values[card]["mode"] = "card"
+    hosts = sfx_tags(beats, total, voice)
     for b in beats:
         overlay = LAYOUT.get(b["card"]) == "overlay"
         vv = html.escape(json.dumps(values.get(b["card"], {}), ensure_ascii=False), quote=True)
@@ -143,6 +193,15 @@ def write_index(project, beats, tl, data, total):
             f'        data-start="{b["start"]:.2f}" data-duration="{b["end"] - b["start"]:.2f}" data-track-index="{2 if overlay else 1}"\n'
             f'        data-track-kind="graphics" data-width="{tl["width"]}" data-height="{tl["height"]}"\n'
             f'        data-variable-values="{vv}" style="z-index: {30 if overlay else 10}"></div>')
+    if voice:
+        presenter = (f'<audio id="narration" class="clip" src="assets/narration.wav" data-start="0" data-duration="{total:.2f}"\n'
+                     f'        data-track-index="0" data-volume="1"></audio>')
+    else:
+        presenter = (f'<div id="twin-frame">\n'
+                     f'        <video id="twin" class="clip" src="assets/twin.mp4" data-start="0" data-duration="{total:.2f}"\n'
+                     f'          data-track-index="0" data-has-audio="true" playsinline></video>\n'
+                     f'        <div id="twin-ring"></div>\n'
+                     f'      </div>')
     doc = f"""<!doctype html>
 <!-- Written by tools/hf_reel.py from timeline.json and data.json: edit those, or the scenes in compositions/. -->
 <html lang="en" data-resolution="portrait">
@@ -185,11 +244,7 @@ def write_index(project, beats, tl, data, total):
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{total:.2f}"
       data-width="{tl['width']}" data-height="{tl['height']}" data-fps="{tl['fps']}">
-      <div id="twin-frame">
-        <video id="twin" class="clip" src="assets/twin.mp4" data-start="0" data-duration="{total:.2f}"
-          data-track-index="0" data-has-audio="true" playsinline></video>
-        <div id="twin-ring"></div>
-      </div>
+      {presenter}
 
       {chr(10).join('      ' + h if i else h for i, h in enumerate(hosts))}
 
@@ -199,7 +254,7 @@ def write_index(project, beats, tl, data, total):
     </div>
     <script>
       const tl = gsap.timeline({{ paused: true }});
-      {reframe_script(beats, tl, total)}
+      {"" if voice else reframe_script(beats, tl, total)}
       window.__timelines["main"] = tl;
     </script>
   </body>
@@ -220,7 +275,8 @@ def caption_markup(text):
 
 def write_captions(project, beats, tl, total):
     groups, tweens = [], []
-    for i, (a, b, text) in enumerate(caption_events(beats)):
+    timed = [dict(b, start=b["speech"][0] - 0.1, end=b["speech"][1] + 0.25) if "speech" in b else b for b in beats]
+    for i, (a, b, text) in enumerate(caption_events(timed)):
         b = min(b, total)
         groups.append(
             f'<div id="cap-{i}" class="cap clip" data-start="{a:.2f}" data-duration="{b - a:.2f}" data-track-index="0">'
@@ -291,6 +347,7 @@ def main():
     src = ap.add_mutually_exclusive_group(required=True)
     src.add_argument("--twin", type=Path, help="9:16 video of your digital twin reading twin_script.txt")
     src.add_argument("--placeholder", action="store_true", help="use a stand-in presenter")
+    src.add_argument("--voice", help="no presenter: narrate with this local Kokoro voice (e.g. am_michael)")
     ap.add_argument("--auto-sync", action="store_true", help="align beats to the pauses in the twin's audio")
     ap.add_argument("--render", action="store_true", help="check, then render the reel")
     ap.add_argument("--out", type=Path, help="render path (default <reel>/out/reel_hyperframes.mp4)")
@@ -303,17 +360,23 @@ def main():
     tl = json.loads((reel / "timeline.json").read_text())
     data = json.loads((reel / "data.json").read_text())
 
-    if a.twin:
-        source = a.twin.resolve()
-        if a.auto_sync:
-            auto_sync(tl, source)
+    if a.voice:
+        total = make_voiceover(project, build, tl, a.voice)
+        beats = tl["beats"]
+        (project / "assets" / "twin.mp4").unlink(missing_ok=True)
     else:
-        planned = beat_windows(tl)
-        source = make_placeholder(build, tl, planned, planned[-1]["end"])
-    twin = project / "assets" / "twin.mp4"
-    prepare_twin(source, twin, tl)
-    total = probe_duration(twin)
-    beats = beat_windows(tl, total=total)
+        if a.twin:
+            source = a.twin.resolve()
+            if a.auto_sync:
+                auto_sync(tl, source)
+        else:
+            planned = beat_windows(tl)
+            source = make_placeholder(build, tl, planned, planned[-1]["end"])
+        twin = project / "assets" / "twin.mp4"
+        prepare_twin(source, twin, tl)
+        total = probe_duration(twin)
+        beats = beat_windows(tl, total=total)
+        (project / "assets" / "narration.wav").unlink(missing_ok=True)
 
     sfx_out = project / "assets" / "sfx"
     sfx_out.mkdir(parents=True, exist_ok=True)
@@ -322,7 +385,7 @@ def main():
         if not (sfx_out / src_file.name).exists():
             shutil.copy(src_file, sfx_out / src_file.name)
 
-    write_index(project, beats, tl, data, total)
+    write_index(project, beats, tl, data, total, a.voice)
     write_captions(project, beats, tl, total)
     print(f"wrote {project / 'index.html'} and compositions/captions.html ({total:.1f}s, {len(beats)} beats)")
 

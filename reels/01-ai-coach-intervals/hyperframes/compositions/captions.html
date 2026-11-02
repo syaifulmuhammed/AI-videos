@@ -5,6 +5,17 @@
     <template>
       <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
         <style>
+          /* Montserrat Black (SIL OFL, from Fontsource): the heavy all-caps caption look of CapCut-style reels. */
+          @font-face {
+            font-family: "Montserrat";
+            font-weight: 900;
+            src: url("assets/fonts/montserrat-latin-900-normal.woff2") format("woff2");
+          }
+          @font-face {
+            font-family: "Montserrat";
+            font-weight: 800;
+            src: url("assets/fonts/montserrat-latin-800-normal.woff2") format("woff2");
+          }
           #root {
             position: absolute;
             inset: 0;
@@ -18,19 +29,24 @@
             text-align: center;
             overflow: visible;
           }
+          /* No box: butter-yellow letters held off the footage by a dark outline and a soft drop shadow. */
           .cap-t {
             display: inline-block;
-            padding: 8px 26px 12px;
-            border-radius: 20px;
-            background: rgba(11, 15, 20, 0.6);
-            font-family: "Inter", system-ui, sans-serif;
-            font-size: 66px;
+            padding: 0 30px;
+            font-family: "Montserrat", "Inter", system-ui, sans-serif;
+            font-size: 64px;
             font-weight: 900;
-            letter-spacing: -0.01em;
-            color: #ffffff;
+            line-height: 1.1;
+            letter-spacing: 0.01em;
+            text-transform: uppercase;
+            color: #ffe68f;
+            -webkit-text-stroke: 9px #14110a;
+            paint-order: stroke fill;
+            text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+            transform-origin: 50% 60%;
           }
           .cap-k {
-            color: #c6f432;
+            color: #ffffff;
           }
         </style>
         <div id="cap-0" class="cap clip" data-start="4.33" data-duration="1.55" data-track-index="0"><span class="cap-t">My AI coach fixed it.</span></div>
@@ -51,24 +67,24 @@
             var fit = window.__hyperframes && window.__hyperframes.fitTextFontSize;
             if (fit) {
               document.querySelectorAll("#root .cap-t").forEach(function (el) {
-                var size = fit(el.textContent, { fontFamily: "Inter", fontWeight: 900, maxWidth: 900, baseSize: 66, minSize: 42 }).fontSize;
+                var size = fit(el.textContent.toUpperCase(), { fontFamily: "Montserrat", fontWeight: 900, maxWidth: 900, baseSize: 64, minSize: 40 }).fontSize;
                 el.style.fontSize = size + "px";
               });
             }
             var tl = gsap.timeline({ paused: true });
-            tl.fromTo("#cap-0 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 4.33);
-            tl.fromTo("#cap-1 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 5.88);
-            tl.fromTo("#cap-2 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 7.60);
-            tl.fromTo("#cap-3 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 9.09);
-            tl.fromTo("#cap-4 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 10.54);
-            tl.fromTo("#cap-5 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 11.35);
-            tl.fromTo("#cap-6 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 12.15);
-            tl.fromTo("#cap-7 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 13.72);
-            tl.fromTo("#cap-8 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 14.63);
-            tl.fromTo("#cap-9 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 15.44);
-            tl.fromTo("#cap-10 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 15.98);
-            tl.fromTo("#cap-11 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 17.49);
-            tl.fromTo("#cap-12 .cap-t", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }, 18.76);
+            tl.fromTo("#cap-0 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 4.33);
+            tl.fromTo("#cap-1 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 5.88);
+            tl.fromTo("#cap-2 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 7.60);
+            tl.fromTo("#cap-3 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 9.09);
+            tl.fromTo("#cap-4 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 10.54);
+            tl.fromTo("#cap-5 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 11.35);
+            tl.fromTo("#cap-6 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 12.15);
+            tl.fromTo("#cap-7 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 13.72);
+            tl.fromTo("#cap-8 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 14.63);
+            tl.fromTo("#cap-9 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 15.44);
+            tl.fromTo("#cap-10 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 15.98);
+            tl.fromTo("#cap-11 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 17.49);
+            tl.fromTo("#cap-12 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 18.76);
             window.__timelines["captions"] = tl;
           })();
         </script>

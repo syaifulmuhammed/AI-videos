@@ -1,5 +1,10 @@
 # Review: reel 01 in HyperFrames
 
+## Caption style (2 Nov)
+- **The look:** no background box. Butter yellow (#FFE68F) in Montserrat Black, all caps, with a 9 px dark outline painted behind the fill and a soft drop shadow, so it reads over bright road and sky. That's the heavy-caps style popular in CapCut and on creator reels. Numbers and SHOUTED words switch to white.
+- **Entrance:** each group pops in (scale 0.82 → 1, 0.18 s, slight overshoot) in place of the earlier blur-in.
+- **Font:** Montserrat 800/900 woff2 from the Fontsource npm package (SIL OFL), in `assets/fonts/` with its licence, loaded by `@font-face` in the captions composition, because HyperFrames can't fetch Google Fonts here.
+
 ## Music removed (2 Nov)
 - **Your call:** both hook previews are rendered without the music bed. Music goes on in Instagram instead. `--music` and `tools/make_music.py` stay available. The look-ahead truncation fix (fixed gain in place of loudnorm) still applies if it's used again.
 

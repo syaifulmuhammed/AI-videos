@@ -410,8 +410,9 @@ def write_captions(project, beats, tl, total, skip=()):
         groups.append(
             f'<div id="cap-{i}" class="cap clip" data-start="{a:.2f}" data-duration="{b - a:.2f}" data-track-index="0">'
             f'<span class="cap-t">{caption_markup(text)}</span></div>')
-        tweens.append(f'tl.fromTo("#cap-{i} .cap-t", {{ opacity: 0, filter: "blur(6px)" }}, '
-                      f'{{ opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }}, {a:.2f});')
+        # Social-style pop: each group lands from slightly small with a little overshoot.
+        tweens.append(f'tl.fromTo("#cap-{i} .cap-t", {{ opacity: 0, scale: 0.82 }}, '
+                      f'{{ opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }}, {a:.2f});')
     doc = f"""<!doctype html>
 <!-- Written by tools/hf_reel.py: one caption group per spoken chunk of timeline.json. -->
 <html lang="en" data-composition-id="captions">
@@ -419,6 +420,17 @@ def write_captions(project, beats, tl, total, skip=()):
     <template>
       <div id="root" data-composition-id="captions" data-width="{tl['width']}" data-height="{tl['height']}">
         <style>
+          /* Montserrat Black (SIL OFL, from Fontsource): the heavy all-caps caption look of CapCut-style reels. */
+          @font-face {{
+            font-family: "Montserrat";
+            font-weight: 900;
+            src: url("assets/fonts/montserrat-latin-900-normal.woff2") format("woff2");
+          }}
+          @font-face {{
+            font-family: "Montserrat";
+            font-weight: 800;
+            src: url("assets/fonts/montserrat-latin-800-normal.woff2") format("woff2");
+          }}
           #root {{
             position: absolute;
             inset: 0;
@@ -432,19 +444,24 @@ def write_captions(project, beats, tl, total, skip=()):
             text-align: center;
             overflow: visible;
           }}
+          /* No box: butter-yellow letters held off the footage by a dark outline and a soft drop shadow. */
           .cap-t {{
             display: inline-block;
-            padding: 8px 26px 12px;
-            border-radius: 20px;
-            background: rgba(11, 15, 20, 0.6);
-            font-family: "Inter", system-ui, sans-serif;
-            font-size: 66px;
+            padding: 0 30px;
+            font-family: "Montserrat", "Inter", system-ui, sans-serif;
+            font-size: 64px;
             font-weight: 900;
-            letter-spacing: -0.01em;
-            color: #ffffff;
+            line-height: 1.1;
+            letter-spacing: 0.01em;
+            text-transform: uppercase;
+            color: #ffe68f;
+            -webkit-text-stroke: 9px #14110a;
+            paint-order: stroke fill;
+            text-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+            transform-origin: 50% 60%;
           }}
           .cap-k {{
-            color: #c6f432;
+            color: #ffffff;
           }}
         </style>
         {chr(10).join('        ' + g if i else g for i, g in enumerate(groups))}
@@ -453,7 +470,7 @@ def write_captions(project, beats, tl, total, skip=()):
             var fit = window.__hyperframes && window.__hyperframes.fitTextFontSize;
             if (fit) {{
               document.querySelectorAll("#root .cap-t").forEach(function (el) {{
-                var size = fit(el.textContent, {{ fontFamily: "Inter", fontWeight: 900, maxWidth: 900, baseSize: 66, minSize: 42 }}).fontSize;
+                var size = fit(el.textContent.toUpperCase(), {{ fontFamily: "Montserrat", fontWeight: 900, maxWidth: 900, baseSize: 64, minSize: 40 }}).fontSize;
                 el.style.fontSize = size + "px";
               }});
             }}

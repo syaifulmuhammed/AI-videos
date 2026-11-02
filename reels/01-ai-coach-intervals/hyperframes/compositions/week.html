@@ -3,12 +3,12 @@
   lang="en"
   data-composition-id="week"
   data-composition-variables='[
-    { "id": "range", "type": "string", "label": "Week", "default": "24–30 Oct" },
-    { "id": "hours", "type": "number", "label": "Hours", "default": 11.1, "step": 0.1 },
-    { "id": "km", "type": "number", "label": "Distance (km)", "default": 372, "step": 1 },
-    { "id": "fitness", "type": "number", "label": "Fitness (CTL)", "default": 77, "step": 1 },
-    { "id": "fatigue", "type": "number", "label": "Fatigue (ATL)", "default": 116, "step": 1 },
-    { "id": "form", "type": "number", "label": "Form (TSB)", "default": -39, "step": 1 }
+    { "id": "range", "type": "string", "label": "Week", "default": "27 Oct–2 Nov" },
+    { "id": "hours", "type": "number", "label": "Hours", "default": 7.1, "step": 0.1 },
+    { "id": "km", "type": "number", "label": "Distance (km)", "default": 239, "step": 1 },
+    { "id": "fitness", "type": "number", "label": "Fitness (CTL)", "default": 72, "step": 1 },
+    { "id": "fatigue", "type": "number", "label": "Fatigue (ATL)", "default": 77, "step": 1 },
+    { "id": "form", "type": "number", "label": "Form (TSB)", "default": -5, "step": 1 }
   ]'
 >
   <body>
@@ -83,8 +83,8 @@
               <div class="wk-cap">ridden</div>
             </div>
             <div id="wk-h3" class="wk-hero">
-              <div><span id="wk-h3-n" class="wk-big r-num" style="color: var(--red)">0</span></div>
-              <div class="wk-cap">form &mdash; deep in the red</div>
+              <div><span id="wk-h3-n" class="wk-big r-num">0</span></div>
+              <div id="wk-h3-cap" class="wk-cap"></div>
             </div>
 
             <div id="wk-row">
@@ -105,12 +105,16 @@
         <script>
           (function () {
             var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
-            var hours = v.hours != null ? v.hours : 11.1;
-            var km = v.km != null ? v.km : 372;
-            var form = v.form != null ? v.form : -39;
-            document.getElementById("wk-range").textContent = v.range || "24–30 Oct";
-            document.getElementById("wk-fit-v").textContent = reel.format(v.fitness != null ? v.fitness : 77, 0);
-            document.getElementById("wk-fat-v").textContent = reel.format(v.fatigue != null ? v.fatigue : 116, 0);
+            var hours = v.hours != null ? v.hours : 7.1;
+            var km = v.km != null ? v.km : 239;
+            var form = v.form != null ? v.form : -5;
+            // Form bands as intervals.icu colours them: under -30 high risk, -30 to -10 optimal training, -10 to +5 grey zone, above +5 fresh.
+            var band = form < -30 ? ["deep in the red", "var(--red)"] : form < -10 ? ["in the training zone", "var(--amber)"] : form <= 5 ? ["almost fresh", "var(--amber)"] : ["fresh", "var(--green)"];
+            document.getElementById("wk-h3-cap").textContent = "form \u2014 " + band[0];
+            document.getElementById("wk-h3-n").style.color = band[1];
+            document.getElementById("wk-range").textContent = v.range || "27 Oct–2 Nov";
+            document.getElementById("wk-fit-v").textContent = reel.format(v.fitness != null ? v.fitness : 72, 0);
+            document.getElementById("wk-fat-v").textContent = reel.format(v.fatigue != null ? v.fatigue : 77, 0);
 
             var tl = gsap.timeline({ paused: true });
             tl.fromTo("#wk-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);

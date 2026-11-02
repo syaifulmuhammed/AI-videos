@@ -3,8 +3,10 @@
   lang="en"
   data-composition-id="verdict"
   data-composition-variables='[
-    { "id": "today", "type": "number", "label": "Form today (TSB)", "default": -39, "step": 1 },
-    { "id": "raceForm", "type": "number", "label": "Form on race day", "default": 13, "step": 1 },
+    { "id": "line1", "type": "string", "label": "Verdict, line 1", "default": "Keep it light." },
+    { "id": "line2", "type": "string", "label": "Verdict, line 2", "default": "Stay fresh." },
+    { "id": "today", "type": "number", "label": "Form today (TSB)", "default": -5, "step": 1 },
+    { "id": "raceForm", "type": "number", "label": "Form on race day", "default": 14, "step": 1 },
     { "id": "targetMin", "type": "number", "label": "Target form, low", "default": 8, "step": 1 },
     { "id": "targetMax", "type": "number", "label": "Target form, high", "default": 18, "step": 1 },
     { "id": "race", "type": "string", "label": "Race line", "default": "Masters TT · 7 Nov · A race" }
@@ -109,8 +111,8 @@
           <div class="r-ground"></div>
           <div class="r-stage">
             <div id="vd-label" class="r-label">AI coach verdict</div>
-            <div id="vd-l1" class="vd-line" style="top: 296px">Reduce load.</div>
-            <div id="vd-l2" class="vd-line" style="top: 404px; color: var(--lime)">Prioritise recovery.</div>
+            <div id="vd-l1" class="vd-line" style="top: 296px">Keep it light.</div>
+            <div id="vd-l2" class="vd-line" style="top: 404px; color: var(--lime)">Stay fresh.</div>
 
             <div id="vd-box" class="r-box">
               <div id="vd-box-title">Form on race day</div>
@@ -134,8 +136,10 @@
         <script>
           (function () {
             var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
-            var today = v.today != null ? v.today : -39;
-            var race = v.raceForm != null ? v.raceForm : 13;
+            var today = v.today != null ? v.today : -5;
+            var race = v.raceForm != null ? v.raceForm : 14;
+            if (v.line1) document.getElementById("vd-l1").textContent = v.line1;
+            if (v.line2) document.getElementById("vd-l2").textContent = v.line2;
             var lo = v.targetMin != null ? v.targetMin : 8;
             var hi = v.targetMax != null ? v.targetMax : 18;
             document.getElementById("vd-box-sub").textContent = v.race || "Masters TT · 7 Nov · A race";
@@ -151,6 +155,12 @@
             var todayTick = document.getElementById("vd-t-today");
             todayTick.style.left = X(today) + 40 + "px";
             todayTick.textContent = "today " + reel.format(today, 0, true);
+            // Same form bands as the week scene: red only when form is truly deep (under -30).
+            var todayColor = today < -30 ? "#ff5a52" : "#ffb020";
+            todayTick.style.color = todayColor;
+            document.getElementById("vd-mk").style.color = todayColor;
+            // When today sits near zero its label would run into the "0": keep the tick line, drop the 0.
+            if (Math.abs(X(today) - X(0)) < 170) document.getElementById("vd-t-zero").textContent = "";
             document.getElementById("vd-t-sweet").style.left = X((lo + hi) / 2) + "px";
             document.getElementById("vd-mk-n").textContent = reel.format(today, 0, true);
 

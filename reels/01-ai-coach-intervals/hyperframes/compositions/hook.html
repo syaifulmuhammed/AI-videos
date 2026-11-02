@@ -3,7 +3,8 @@
   lang="en"
   data-composition-id="hook"
   data-composition-variables='[
-    { "id": "days", "type": "number", "label": "Days to race", "default": 8, "min": 1, "step": 1 }
+    { "id": "days", "type": "number", "label": "Days to race", "default": 5, "min": 1, "step": 1 },
+    { "id": "word", "type": "string", "label": "Slam word", "default": "BACK OFF." }
   ]'
 >
   <body>
@@ -32,7 +33,8 @@
             line-height: 1.05;
           }
           #hook-stop {
-            font-size: 168px;
+            font-size: 150px;
+            white-space: nowrap;
             font-weight: 900;
             line-height: 0.95;
             letter-spacing: -0.04em;
@@ -55,15 +57,16 @@
           <div id="hook-tag" class="r-tag">AI-generated digital twin</div>
           <div id="hook-box">
             <div id="hook-line">My AI coach told me to</div>
-            <div id="hook-stop">STOP.</div>
-            <div id="hook-days"><span id="hook-days-n">8</span> days before my A race</div>
+            <div id="hook-stop">BACK OFF.</div>
+            <div id="hook-days"><span id="hook-days-n">5</span> days before my A race</div>
           </div>
         </div>
 
         <script>
           (function () {
             var vars = window.__hyperframes ? window.__hyperframes.getVariables() : {};
-            document.getElementById("hook-days-n").textContent = vars.days != null ? vars.days : 8;
+            document.getElementById("hook-days-n").textContent = vars.days != null ? vars.days : 5;
+            if (vars.word) document.getElementById("hook-stop").textContent = vars.word;
 
             // Frame 0 is the thumbnail: the whole line is already on screen.
             // STOP lands from slightly large, then everything holds still.

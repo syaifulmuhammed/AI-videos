@@ -46,10 +46,19 @@
         <div id="twin-ring"></div>
       </div>
 
+      <audio id="sfx-0" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="0.05" data-duration="2.12" data-track-index="4" data-volume="0.35"></audio>
+      <audio id="sfx-1" class="clip" src="assets/sfx/whoosh.mp3" data-start="5.60" data-duration="0.57" data-track-index="5" data-volume="0.3"></audio>
+      <audio id="sfx-2" class="clip" src="assets/sfx/pop.mp3" data-start="10.45" data-duration="0.72" data-track-index="4" data-volume="0.4"></audio>
+      <audio id="sfx-3" class="clip" src="assets/sfx/pop.mp3" data-start="16.40" data-duration="0.72" data-track-index="5" data-volume="0.25"></audio>
+      <audio id="sfx-4" class="clip" src="assets/sfx/ping.mp3" data-start="29.25" data-duration="1.32" data-track-index="4" data-volume="0.3"></audio>
+      <audio id="sfx-5" class="clip" src="assets/sfx/chime.mp3" data-start="38.00" data-duration="2.54" data-track-index="5" data-volume="0.3"></audio>
+      <audio id="sfx-6" class="clip" src="assets/sfx/sparkle.mp3" data-start="43.65" data-duration="1.80" data-track-index="4" data-volume="0.3"></audio>
+      <audio id="sfx-7" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="45.20" data-duration="0.57" data-track-index="5" data-volume="0.3"></audio>
+      <audio id="sfx-8" class="clip" src="assets/sfx/pop.mp3" data-start="48.40" data-duration="0.72" data-track-index="4" data-volume="0.45"></audio>
       <div id="hook" data-composition-id="hook" data-composition-src="compositions/hook.html"
         data-start="0.00" data-duration="5.60" data-track-index="2"
         data-track-kind="graphics" data-width="1080" data-height="1920"
-        data-variable-values="{&quot;days&quot;: 8}" style="z-index: 30"></div>
+        data-variable-values="{&quot;days&quot;: 5, &quot;word&quot;: &quot;BACK OFF.&quot;}" style="z-index: 30"></div>
       <div id="pipeline" data-composition-id="pipeline" data-composition-src="compositions/pipeline.html"
         data-start="5.60" data-duration="8.60" data-track-index="1"
         data-track-kind="graphics" data-width="1080" data-height="1920"
@@ -61,15 +70,15 @@
       <div id="week" data-composition-id="week" data-composition-src="compositions/week.html"
         data-start="21.00" data-duration="9.40" data-track-index="1"
         data-track-kind="graphics" data-width="1080" data-height="1920"
-        data-variable-values="{&quot;range&quot;: &quot;24–30 Oct&quot;, &quot;hours&quot;: 11.1, &quot;km&quot;: 372, &quot;fitness&quot;: 77, &quot;fatigue&quot;: 116, &quot;form&quot;: -39}" style="z-index: 10"></div>
+        data-variable-values="{&quot;range&quot;: &quot;27 Oct–2 Nov&quot;, &quot;hours&quot;: 7.1, &quot;km&quot;: 239, &quot;fitness&quot;: 72, &quot;fatigue&quot;: 77, &quot;form&quot;: -5}" style="z-index: 10"></div>
       <div id="verdict" data-composition-id="verdict" data-composition-src="compositions/verdict.html"
         data-start="30.40" data-duration="10.20" data-track-index="1"
         data-track-kind="graphics" data-width="1080" data-height="1920"
-        data-variable-values="{&quot;today&quot;: -39, &quot;raceForm&quot;: 13, &quot;targetMin&quot;: 8, &quot;targetMax&quot;: 18, &quot;race&quot;: &quot;Masters TT · 7 Nov · A race&quot;}" style="z-index: 10"></div>
+        data-variable-values="{&quot;line1&quot;: &quot;Keep it light.&quot;, &quot;line2&quot;: &quot;Stay fresh.&quot;, &quot;today&quot;: -5, &quot;raceForm&quot;: 14, &quot;targetMin&quot;: 8, &quot;targetMax&quot;: 18, &quot;race&quot;: &quot;Masters TT · 7 Nov · A race&quot;}" style="z-index: 10"></div>
       <div id="gains" data-composition-id="gains" data-composition-src="compositions/gains.html"
         data-start="40.60" data-duration="5.20" data-track-index="1"
         data-track-kind="graphics" data-width="1080" data-height="1920"
-        data-variable-values="{&quot;window&quot;: &quot;last 85 days vs previous 85&quot;, &quot;hourPct&quot;: 10.1, &quot;hourW&quot;: 219, &quot;twentyPct&quot;: 3.6, &quot;twentyW&quot;: 256}" style="z-index: 10"></div>
+        data-variable-values="{&quot;window&quot;: &quot;last 85 days vs previous 85&quot;, &quot;hourPct&quot;: 4.3, &quot;hourW&quot;: 219, &quot;secondLabel&quot;: &quot;1-min power&quot;, &quot;secondPct&quot;: 4.0}" style="z-index: 10"></div>
       <div id="cta" data-composition-id="cta" data-composition-src="compositions/cta.html"
         data-start="45.80" data-duration="6.21" data-track-index="2"
         data-track-kind="graphics" data-width="1080" data-height="1920"
@@ -83,6 +92,7 @@
       const tl = gsap.timeline({ paused: true });
       gsap.set("#twin-frame", { transformOrigin: "540px 576px", clipPath: "circle(2400px at 540px 576px)" });
       gsap.set("#twin-ring", { left: 205, top: 241, width: 670, height: 670, opacity: 0 });
+      tl.set("#twin-frame", { scale: 1.08 }, 2.75);
       tl.fromTo("#twin-frame", { x: 0, y: 0, scale: 1, clipPath: "circle(2400px at 540px 576px)" }, { x: -340, y: 894, scale: 0.3883, clipPath: "circle(335px at 540px 576px)", duration: 0.65, ease: "power2.inOut" }, 5.60);
       tl.fromTo("#twin-ring", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 6.05);
       tl.to("#twin-ring", { opacity: 0, duration: 0.2, ease: "power2.in" }, 45.15);

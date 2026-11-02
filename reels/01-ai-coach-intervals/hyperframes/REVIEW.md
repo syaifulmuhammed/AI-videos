@@ -1,5 +1,12 @@
 # Review: reel 01 in HyperFrames
 
+## 2 Nov update
+- **Numbers:** refreshed from intervals.icu: form −5 (was −39), race in 5 days, +14 on race day, 60-min power +4.3%. The coach's call is now "maintain reduced load and freshness", so the hook says "BACK OFF." and the verdict reads "Keep it light. Stay fresh."
+- **Colours follow the data:** form uses intervals.icu's bands (red only under −30). The verdict hides its "0" label when today's marker sits next to it. The second power result is 1-min power, because 20-min power was flat.
+- **Sound effects:** added from the media-use library (Pixabay licence) on visible actions, quiet under the voice, alternating between two audio lanes. Placed, not heard. Music was offered, not added, because it needs a HeyGen sign-in.
+- **Punch-in:** a hard punch-in on the twin (1.08×) at "Five days before my race" ends the hook's static hold.
+- **Captions:** numbers and shouted words (BACK OFF, COACH) are coloured lime.
+
 ## Creative calls
 - **Single video file:** the twin plays as one `<video>`. For the data beats it shrinks into a bubble at the bottom left, ringed in lime, and for the CTA it grows back into the full frame. The one video element carries both the voice and the picture.
 - **Week beat:** shows one number at a time on a single stage (11.1 h → 372 km → form −39), with fitness and fatigue arriving as they are spoken. The original version used a grid of stat tiles, which HyperFrames' guidance lists as a sign of auto-generated design.

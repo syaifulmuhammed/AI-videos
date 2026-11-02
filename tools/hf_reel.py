@@ -13,6 +13,7 @@ import argparse
 import html
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -22,15 +23,29 @@ from build_reel import auto_sync, beat_windows, caption_events, make_placeholder
 
 ROOT = Path(__file__).resolve().parent.parent
 HF = ROOT / "node_modules" / ".bin" / "hyperframes"
+SFX_DIR = ROOT / ".claude" / "skills" / "media-use" / "audio" / "assets" / "sfx"
 BUBBLE = (200, 1470, 130)  # centre x, centre y, radius of the twin bubble over full-screen cards
 LAYOUT = {"hook": "overlay", "cta": "overlay"}  # every other scene is a full-screen card
+PUNCH_IN = (2.75, 1.08)  # hard punch-in on the twin at "Five days before my race": time, scale
+# Sound effects on visible actions, from the HyperFrames media-use library (Pixabay licence):
+# (seconds after the scene starts, file in assets/sfx, volume). Kept well under the voice.
+SFX = {
+    "hook": [(0.05, "impact-bass-1", 0.35)],
+    "pipeline": [(0.0, "whoosh", 0.3), (4.85, "pop", 0.4)],
+    "coach": [(2.2, "pop", 0.25)],
+    "week": [(8.25, "ping", 0.3)],
+    "verdict": [(7.6, "chime", 0.3)],
+    "gains": [(3.05, "sparkle", 0.3)],
+    "cta": [(-0.6, "whoosh-short", 0.3), (2.6, "pop", 0.45)],
+}
 
 
 def scene_values(data):
-    race, load, gains = data["race"], data["load"], data["power_gains"]
-    hour, twenty = gains["items"][0], gains["items"][1]
+    race, load, gains, coach = data["race"], data["load"], data["power_gains"], data["coach"]
+    hour, second = gains["items"][0], gains["items"][1]
+    line1, _, line2 = coach["directive"].partition(". ")
     return {
-        "hook": {"days": race["days_to_go"]},
+        "hook": {"days": race["days_to_go"], "word": coach["hook_word"]},
         "week": {
             "range": data["week"]["range"].replace(" 2026", "").replace("-", "–"),
             "hours": data["week"]["hours"],
@@ -40,6 +55,8 @@ def scene_values(data):
             "form": load["form_tsb"],
         },
         "verdict": {
+            "line1": line1 + "." if line2 else line1,
+            "line2": line2,
             "today": load["form_tsb"],
             "raceForm": race["race_day_form_tsb"],
             "targetMin": race["target_form_min"],
@@ -50,8 +67,8 @@ def scene_values(data):
             "window": gains["window"],
             "hourPct": hour["delta_pct"],
             "hourW": hour["watts"],
-            "twentyPct": twenty["delta_pct"],
-            "twentyW": twenty["watts"],
+            "secondLabel": second["label"],
+            "secondPct": second["delta_pct"],
         },
         "cta": {"keyword": "COACH"},
     }
@@ -79,6 +96,8 @@ def reframe_script(beats, tl, total):
         f'gsap.set("#twin-frame", {{ transformOrigin: "{fx:.0f}px {fy:.0f}px", clipPath: "{big}" }});',
         f'gsap.set("#twin-ring", {{ left: {fx - r:.0f}, top: {fy - r:.0f}, width: {2 * r:.0f}, height: {2 * r:.0f}, opacity: 0 }});',
     ]
+    if LAYOUT.get(beats[0]["card"]) == "overlay" and beats[0]["end"] > PUNCH_IN[0] + 0.5:
+        lines.append(f'tl.set("#twin-frame", {{ scale: {PUNCH_IN[1]} }}, {PUNCH_IN[0]});')
     runs, cur = [], None
     for b in beats:
         if LAYOUT.get(b["card"]) == "overlay":
@@ -100,9 +119,22 @@ def reframe_script(beats, tl, total):
     return "\n      ".join(lines)
 
 
+def sfx_tags(beats, total):
+    """Timed <audio> clips for SFX, each lasting exactly its file."""
+    tags = []
+    for b in beats:
+        for offset, name, volume in SFX.get(b["card"], []):
+            at = b["start"] + offset
+            if offset < b["end"] - b["start"] and 0 <= at < total - 0.5:
+                length = min(probe_duration(SFX_DIR / f"{name}.mp3"), total - at)
+                tags.append(f'<audio id="sfx-{len(tags)}" class="clip" src="assets/sfx/{name}.mp3" data-start="{at:.2f}" '
+                            f'data-duration="{length:.2f}" data-track-index="{4 + len(tags) % 2}" data-volume="{volume}"></audio>')
+    return tags
+
+
 def write_index(project, beats, tl, data, total):
     values = scene_values(data)
-    hosts = []
+    hosts = sfx_tags(beats, total)
     for b in beats:
         overlay = LAYOUT.get(b["card"]) == "overlay"
         vv = html.escape(json.dumps(values.get(b["card"], {}), ensure_ascii=False), quote=True)
@@ -176,13 +208,23 @@ def write_index(project, beats, tl, data, total):
     (project / "index.html").write_text(doc)
 
 
+def caption_markup(text):
+    """Escape a caption, colouring numbers and SHOUTED words (STOP, COACH) in the accent."""
+    out = []
+    for word in text.split():
+        core = word.strip(".,!?")
+        key = any(c.isdigit() for c in core) or (len(core) > 2 and core.isupper())
+        out.append(f'<span class="cap-k">{html.escape(word)}</span>' if key else html.escape(word))
+    return " ".join(out)
+
+
 def write_captions(project, beats, tl, total):
     groups, tweens = [], []
     for i, (a, b, text) in enumerate(caption_events(beats)):
         b = min(b, total)
         groups.append(
             f'<div id="cap-{i}" class="cap clip" data-start="{a:.2f}" data-duration="{b - a:.2f}" data-track-index="0">'
-            f'<span class="cap-t">{html.escape(text)}</span></div>')
+            f'<span class="cap-t">{caption_markup(text)}</span></div>')
         tweens.append(f'tl.fromTo("#cap-{i} .cap-t", {{ opacity: 0, filter: "blur(6px)" }}, '
                       f'{{ opacity: 1, filter: "blur(0px)", duration: 0.12, ease: "power2.out" }}, {a:.2f});')
     doc = f"""<!doctype html>
@@ -215,6 +257,9 @@ def write_captions(project, beats, tl, total):
             font-weight: 900;
             letter-spacing: -0.01em;
             color: #ffffff;
+          }}
+          .cap-k {{
+            color: #c6f432;
           }}
         </style>
         {chr(10).join('        ' + g if i else g for i, g in enumerate(groups))}
@@ -269,6 +314,13 @@ def main():
     prepare_twin(source, twin, tl)
     total = probe_duration(twin)
     beats = beat_windows(tl, total=total)
+
+    sfx_out = project / "assets" / "sfx"
+    sfx_out.mkdir(parents=True, exist_ok=True)
+    for name in {n for cues in SFX.values() for _, n, _ in cues} | {"CREDITS"}:
+        src_file = SFX_DIR / (f"{name}.md" if name == "CREDITS" else f"{name}.mp3")
+        if not (sfx_out / src_file.name).exists():
+            shutil.copy(src_file, sfx_out / src_file.name)
 
     write_index(project, beats, tl, data, total)
     write_captions(project, beats, tl, total)

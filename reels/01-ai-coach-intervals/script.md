@@ -23,6 +23,20 @@ Narrated by the local AI voice "Michael" (`am_michael`) at 1.2× speed. Lines ar
 
 The same lines are in `twin_script.txt` for the digital-twin version.
 
+## 25-second cut (`timeline_25s.json` → `out/reel_25s.mp4`)
+
+Five beats, built for cold viewers: the coach and week beats (the most jargon) are gone.
+
+| # | Narrator says | On screen |
+|---|---------------|-----------|
+| 1 · Hook | "Five days before my race, my AI coach told me to back off!" | Your selfie footage, with **My AI coach told me to BACK OFF.** at the top |
+| 2 · Setup | "Garmin and Strava sync to intervals.icu. An AI coach reads it every day." | Garmin + Strava → intervals.icu → AI coach, over the ride |
+| 3 · Verdict | "The verdict? Keep it light! Hold back now, and I hit race day at +14 form. Sweet spot." | **Keep it light. Stay fresh.** The marker goes from −5 to +14 in the sweet spot |
+| 4 · Payoff | "And it's working! One hour power, up four percent." | **+4.3%** 1-hour power |
+| 5 · CTA | "Want my setup? Comment COACH!" | Your selfie footage, with the **Comment "COACH"** box at the top |
+
+Build: `python3 tools/hf_reel.py reels/01-ai-coach-intervals --timeline timeline_25s.json --voice am_michael --render --out reels/01-ai-coach-intervals/out/reel_25s.mp4`
+
 ## Where each number comes from
 
 All numbers come from the intervals.icu weekly report pulled on 2 Nov 2026:

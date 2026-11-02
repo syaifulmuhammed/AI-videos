@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="en" data-composition-id="pipeline">
+<html
+  lang="en"
+  data-composition-id="pipeline"
+  data-composition-variables='[
+    { "id": "pace", "type": "number", "label": "Pace (1 = as timed, lower = faster reveals)", "default": 1, "min": 0.4, "max": 1.5, "step": 0.05 }
+  ]'
+>
   <body>
     <template>
       <div id="root" data-composition-id="pipeline" data-width="1080" data-height="1920">
@@ -72,25 +78,28 @@
         <script>
           (function () {
             var tl = gsap.timeline({ paused: true });
+            // Shorter cuts read the line faster: every reveal time scales by `pace`.
+            var pace = (window.__hyperframes ? window.__hyperframes.getVariables() : {}).pace || 1;
+            var P = function (t) { return t * pace; };
             var words = reel.splitWords(document.getElementById("pl-title"));
 
-            tl.fromTo("#pl-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);
+            tl.fromTo("#pl-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, P(0));
             reel.wordsIn(tl, words, 0.03);
 
             // Sources arrive with the words "Garmin and Strava" (about 1.2 s in).
-            tl.fromTo("#pl-garmin", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, 1.1);
-            tl.fromTo("#pl-strava", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, 1.4);
+            tl.fromTo("#pl-garmin", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, P(1.1));
+            tl.fromTo("#pl-strava", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, P(1.4));
 
             ["#pl-w1", "#pl-w2", "#pl-w3"].forEach(function (sel) {
               var len = document.querySelector(sel).getTotalLength();
               gsap.set(sel, { strokeDasharray: len, strokeDashoffset: len });
             });
-            tl.to("#pl-w1", { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, 2.4);
-            tl.to("#pl-w2", { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, 2.5);
-            tl.fromTo("#pl-icu", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, 2.8);
+            tl.to("#pl-w1", { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, P(2.4));
+            tl.to("#pl-w2", { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, P(2.5));
+            tl.fromTo("#pl-icu", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, P(2.8));
 
-            tl.to("#pl-w3", { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, 4.6);
-            tl.fromTo("#pl-coach", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, 4.85);
+            tl.to("#pl-w3", { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, P(4.6));
+            tl.fromTo("#pl-coach", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, P(4.85));
 
             window.__timelines["pipeline"] = tl;
           })();

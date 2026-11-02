@@ -1,5 +1,11 @@
 # Review: reel 01 in HyperFrames
 
+## 25-second cut (2 Nov)
+- **Beats:** `timeline_25s.json` keeps hook, setup, verdict, payoff and CTA, with shorter lines. Pauses after the verdict, payoff and CTA bring it to 24.8 s.
+- **Pace:** the setup and verdict scenes take a `pace` variable (0.6 and 0.75 here) that scales their reveal times, and their sound effects with them. The 42-second version keeps pace 1.
+- **Which version is loaded:** `index.html` is whichever cut was built last. Rebuild with `--timeline` to switch.
+- **CTA footage:** opens on your face, which pans to the bunch after about 2 s. The box carries the ask, so I kept it.
+
 ## Your ride footage (2 Nov)
 - **The footage:** your 31 Oct group-ride clip (`assets/ride.mp4`, made upright, 1080×1920, a keyframe every second, muted) plays under the whole reel. The hook opens on the steady selfie stretch (from 20.3 s), so your real face is the thumbnail. The data cards sit on a dark scrim with glass panels over the ride, at 0.91× so the 29.8 s clip covers all 32.8 s of cards. The CTA returns to the selfie (from 8.6 s).
 - **Layout around your face:** the hook and CTA keep the over-the-presenter layout. The CTA box moves to the top (270 px), and those two beats have no captions, because the face fills the lower half and their cards already show the line in big type.

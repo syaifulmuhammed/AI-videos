@@ -1,0 +1,67 @@
+{
+  "title": "My AI coach told me to back off (25 s cut)",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "pip": {
+    "_note": "Where your face sits in the twin video, as fractions of the frame. Used to crop the circle bubble shown over full-screen cards.",
+    "center_x": 0.5,
+    "center_y": 0.3,
+    "size": 0.62
+  },
+  "footage": {
+    "_note": "Seconds into your ride video where each part starts: hook and cta should open on your face.",
+    "hook": 20.3,
+    "cards": 0.0,
+    "cta": 8.6
+  },
+  "_note": "Short cut: hook, setup, verdict, payoff, CTA. Build with --timeline timeline_25s.json.",
+  "beats": [
+    {
+      "id": "hook",
+      "card": "hook",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "Five days before my race, my AI coach told me to back off!",
+      "caption": "5 days before my race, my AI coach told me to BACK OFF!",
+      "hold": 0.6
+    },
+    {
+      "id": "pipeline",
+      "card": "pipeline",
+      "layout": "full",
+      "start": 0.0,
+      "say": "Garmin and Strava sync to intervals dot I C U. An AI coach reads it every day.",
+      "caption": "Garmin and Strava sync to intervals.icu. An AI coach reads it every day.",
+      "pace": 0.6
+    },
+    {
+      "id": "verdict",
+      "card": "verdict",
+      "layout": "full",
+      "start": 0.0,
+      "say": "The verdict? Keep it light! Hold back now, and I hit race day at plus fourteen form. Sweet spot.",
+      "caption": "The verdict? Keep it light! Hold back now and I hit race day at +14 form. Sweet spot.",
+      "pace": 0.75,
+      "hold": 0.6
+    },
+    {
+      "id": "gains",
+      "card": "gains",
+      "layout": "full",
+      "start": 0.0,
+      "say": "And it's working! One hour power, up four percent.",
+      "caption": "And it's working! 1-hour power, up 4%.",
+      "hold": 0.7
+    },
+    {
+      "id": "cta",
+      "card": "cta",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "Want my setup? Comment COACH!",
+      "caption": "Want my setup? Comment COACH!",
+      "hold": 0.9
+    }
+  ]
+}

@@ -3,6 +3,7 @@
   lang="en"
   data-composition-id="verdict"
   data-composition-variables='[
+    { "id": "pace", "type": "number", "label": "Pace (1 = as timed, lower = faster reveals)", "default": 1, "min": 0.4, "max": 1.5, "step": 0.05 },
     { "id": "line1", "type": "string", "label": "Verdict, line 1", "default": "Keep it light." },
     { "id": "line2", "type": "string", "label": "Verdict, line 2", "default": "Stay fresh." },
     { "id": "today", "type": "number", "label": "Form today (TSB)", "default": -5, "step": 1 },
@@ -165,25 +166,28 @@
             document.getElementById("vd-mk-n").textContent = reel.format(today, 0, true);
 
             var tl = gsap.timeline({ paused: true });
-            tl.fromTo("#vd-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);
+            // Shorter cuts read the line faster: every reveal time scales by `pace`.
+            var pace = (window.__hyperframes ? window.__hyperframes.getVariables() : {}).pace || 1;
+            var P = function (t) { return t * pace; };
+            tl.fromTo("#vd-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, P(0));
             // The verdict lands line by line as it is spoken.
-            tl.fromTo("#vd-l1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.9);
-            tl.fromTo("#vd-l2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.6);
+            tl.fromTo("#vd-l1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(0.9));
+            tl.fromTo("#vd-l2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(1.6));
 
             // Then the chart in reading order: frame, reference line, data, annotation.
-            tl.fromTo("#vd-box", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 2.4);
-            tl.fromTo("#vd-track", { opacity: 0, scaleX: 0, transformOrigin: "0% 50%" }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 2.7);
-            tl.fromTo(["#vd-zero", "#vd-t-zero"], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 3.0);
-            tl.fromTo("#vd-band", { opacity: 0 }, { opacity: 0.9, duration: 0.4, ease: "power2.out" }, 3.1);
-            tl.fromTo("#vd-mk", { opacity: 0, x: X(today) }, { opacity: 1, x: X(today), duration: 0.3, ease: "power2.out" }, 3.2);
-            tl.fromTo("#vd-t-today", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 3.3);
+            tl.fromTo("#vd-box", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, P(2.4));
+            tl.fromTo("#vd-track", { opacity: 0, scaleX: 0, transformOrigin: "0% 50%" }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.inOut" }, P(2.7));
+            tl.fromTo(["#vd-zero", "#vd-t-zero"], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, P(3.0));
+            tl.fromTo("#vd-band", { opacity: 0 }, { opacity: 0.9, duration: 0.4, ease: "power2.out" }, P(3.1));
+            tl.fromTo("#vd-mk", { opacity: 0, x: X(today) }, { opacity: 1, x: X(today), duration: 0.3, ease: "power2.out" }, P(3.2));
+            tl.fromTo("#vd-t-today", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, P(3.3));
 
             // "...at plus thirteen form": the marker travels into the band.
-            tl.to("#vd-mk", { x: X(race), duration: 1.8, ease: "power2.inOut" }, 3.9);
-            reel.count(tl, "#vd-mk-n", { from: today, to: race, decimals: 0, signed: true, at: 3.9, duration: 1.8, ease: "power2.inOut" });
-            tl.to("#vd-mk", { color: "#3ddc84", duration: 0.5, ease: "power2.inOut" }, 5.1);
-            tl.fromTo("#vd-t-sweet", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 5.9);
-            tl.fromTo("#vd-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 2.7);
+            tl.to("#vd-mk", { x: X(race), duration: P(1.8), ease: "power2.inOut" }, P(3.9));
+            reel.count(tl, "#vd-mk-n", { from: today, to: race, decimals: 0, signed: true, at: P(3.9), duration: P(1.8), ease: "power2.inOut" });
+            tl.to("#vd-mk", { color: "#3ddc84", duration: 0.5, ease: "power2.inOut" }, P(5.1));
+            tl.fromTo("#vd-t-sweet", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(5.9));
+            tl.fromTo("#vd-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, P(2.7));
 
             window.__timelines["verdict"] = tl;
           })();

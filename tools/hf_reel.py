@@ -206,6 +206,8 @@ def sfx_tags(beats, total, voice):
         for offset, name, volume in SFX.get(b["card"], []):
             if voice and offset < 0:
                 continue  # that whoosh belongs to the twin growing back, which has no voiceover equivalent
+            if offset > 0:
+                offset *= b.get("pace", 1)  # reveals (and their sounds) scale with the beat's pace
             at = b["start"] + offset
             if offset < b["end"] - b["start"] and 0 <= at < total - 0.5:
                 length = min(probe_duration(SFX_DIR / f"{name}.mp3"), total - at)
@@ -224,6 +226,9 @@ def write_index(project, beats, tl, data, total, voice=None, footage_len=None):
     elif voice:
         for card in LAYOUT:
             values[card]["mode"] = "card"
+    for b in beats:
+        if "pace" in b:
+            values.setdefault(b["card"], {})["pace"] = b["pace"]
     hosts = sfx_tags(beats, total, voice)
     for b in beats:
         overlay = LAYOUT.get(b["card"]) == "overlay"
@@ -402,6 +407,7 @@ def write_captions(project, beats, tl, total, skip=()):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("reel", type=Path)
+    ap.add_argument("--timeline", default="timeline.json", help="beats file inside the reel folder (e.g. timeline_25s.json for the short cut)")
     src = ap.add_mutually_exclusive_group(required=True)
     src.add_argument("--twin", type=Path, help="9:16 video of your digital twin reading twin_script.txt")
     src.add_argument("--placeholder", action="store_true", help="use a stand-in presenter")
@@ -417,7 +423,7 @@ def main():
     project = reel / "hyperframes"
     build = reel / "build"
     build.mkdir(exist_ok=True)
-    tl = json.loads((reel / "timeline.json").read_text())
+    tl = json.loads((reel / a.timeline).read_text())
     data = json.loads((reel / "data.json").read_text())
 
     if a.voice:

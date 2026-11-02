@@ -1,0 +1,227 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-id="verdict"
+  data-composition-variables='[
+    { "id": "pace", "type": "number", "label": "Pace (1 = as timed, lower = faster reveals)", "default": 1, "min": 0.4, "max": 1.5, "step": 0.05 },
+    { "id": "line1", "type": "string", "label": "Verdict, line 1", "default": "Keep it light." },
+    { "id": "line2", "type": "string", "label": "Verdict, line 2", "default": "Stay fresh." },
+    { "id": "today", "type": "number", "label": "Form today (TSB)", "default": -5, "step": 1 },
+    { "id": "fromForm", "type": "number", "label": "Earlier form to start the marker at (optional)", "default": null },
+    { "id": "fromLabel", "type": "string", "label": "Label for the earlier form", "default": "" },
+    { "id": "raceForm", "type": "number", "label": "Form on race day", "default": 14, "step": 1 },
+    { "id": "targetMin", "type": "number", "label": "Target form, low", "default": 8, "step": 1 },
+    { "id": "targetMax", "type": "number", "label": "Target form, high", "default": 18, "step": 1 },
+    { "id": "race", "type": "string", "label": "Race line", "default": "Masters TT · 7 Nov · A race" }
+  ]'
+>
+  <body>
+    <template>
+      <div id="root" data-composition-id="verdict" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+          }
+          .vd-line {
+            position: absolute;
+            left: 84px;
+            right: 60px;
+            font-size: 98px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            white-space: nowrap;
+          }
+          #vd-box {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 580px;
+            height: 480px;
+            box-sizing: border-box;
+            padding: 36px 42px;
+          }
+          #vd-box-title {
+            font-size: 44px;
+            font-weight: 900;
+          }
+          #vd-box-sub {
+            margin-top: 6px;
+            font-size: 32px;
+            font-weight: 400;
+            color: var(--muted);
+          }
+          /* Track geometry is set in px by the script from the variables. */
+          #vd-track {
+            position: absolute;
+            left: 140px;
+            width: 800px;
+            top: 900px;
+            height: 30px;
+            border-radius: 15px;
+            background: var(--line);
+          }
+          #vd-band {
+            position: absolute;
+            top: 900px;
+            height: 30px;
+            background: var(--green);
+          }
+          #vd-zero {
+            position: absolute;
+            top: 884px;
+            width: 4px;
+            height: 62px;
+            margin-left: -2px;
+            background: var(--muted);
+          }
+          .vd-tick {
+            position: absolute;
+            top: 950px;
+            width: 300px;
+            margin-left: -150px;
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+          }
+          #vd-mk {
+            position: absolute;
+            left: 0;
+            top: 760px;
+            width: 240px;
+            margin-left: -120px;
+            text-align: center;
+            color: var(--red);
+          }
+          #vd-mk-n {
+            font-size: 76px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1;
+          }
+          #vd-mk-tri {
+            width: 0;
+            height: 0;
+            margin: 8px auto 0;
+            border-left: 26px solid transparent;
+            border-right: 26px solid transparent;
+            border-top: 38px solid currentColor;
+          }
+        </style>
+
+        <div id="vd-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div id="vd-label" class="r-label">AI coach verdict</div>
+            <div id="vd-l1" class="vd-line" style="top: 296px">Keep it light.</div>
+            <div id="vd-l2" class="vd-line" style="top: 404px; color: var(--hi)">Stay fresh.</div>
+
+            <div id="vd-box" class="r-box">
+              <div id="vd-box-title">Form on race day</div>
+              <div id="vd-box-sub"></div>
+            </div>
+            <div id="vd-track"></div>
+            <div id="vd-band"></div>
+            <div id="vd-zero"></div>
+            <div id="vd-t-zero" class="vd-tick" style="color: var(--muted)">0</div>
+            <div id="vd-t-today" class="vd-tick" style="color: var(--red)"></div>
+            <div id="vd-t-from" class="vd-tick" style="color: var(--red)"></div>
+            <div id="vd-t-sweet" class="vd-tick" style="color: var(--green)">sweet spot</div>
+            <div id="vd-mk">
+              <div id="vd-mk-n" class="r-num"></div>
+              <div id="vd-mk-tri"></div>
+            </div>
+
+            <div id="vd-source" class="r-source">Source: intervals.icu projection for race day</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
+            var today = v.today != null ? v.today : -5;
+            var race = v.raceForm != null ? v.raceForm : 14;
+            if (v.line1) document.getElementById("vd-l1").textContent = v.line1;
+            if (v.line2) document.getElementById("vd-l2").textContent = v.line2;
+            var lo = v.targetMin != null ? v.targetMin : 8;
+            var hi = v.targetMax != null ? v.targetMax : 18;
+            document.getElementById("vd-box-sub").textContent = v.race || "Masters TT · 7 Nov · A race";
+
+            // Scale from a little below today's form to a little above the target.
+            var from = v.fromForm != null ? v.fromForm : null;
+            var min = Math.min(today, from != null ? from : 0, 0) - 6, max = Math.max(hi, race) + 7;
+            var X = function (val) { return 140 + ((val - min) / (max - min)) * 800; };
+            var band = document.getElementById("vd-band");
+            band.style.left = X(lo) + "px";
+            band.style.width = X(hi) - X(lo) + "px";
+            document.getElementById("vd-zero").style.left = X(0) + "px";
+            document.getElementById("vd-t-zero").style.left = X(0) + "px";
+            var todayTick = document.getElementById("vd-t-today");
+            todayTick.style.left = X(today) + 40 + "px";
+            todayTick.textContent = "today " + reel.format(today, 0, true);
+            // Same form bands as the week scene: red only when form is truly deep (under -30).
+            var todayColor = today < -30 ? "#ff5a52" : "#ffb020";
+            todayTick.style.color = todayColor;
+            document.getElementById("vd-mk").style.color = todayColor;
+            // When today sits near zero its label would run into the "0": keep the tick line, drop the 0.
+            if (Math.abs(X(today) - X(0)) < 170) document.getElementById("vd-t-zero").textContent = "";
+            document.getElementById("vd-t-sweet").style.left = X((lo + hi) / 2) + "px";
+            document.getElementById("vd-mk-n").textContent = reel.format(today, 0, true);
+            var fromTick = document.getElementById("vd-t-from");
+            if (from != null) {
+              // The journey version: the marker starts at the earlier form, stops at today, then reaches race day.
+              fromTick.style.left = X(from) + 40 + "px";
+              fromTick.textContent = (v.fromLabel ? v.fromLabel + " " : "") + reel.format(from, 0, true);
+              document.getElementById("vd-mk-n").textContent = reel.format(from, 0, true);
+              document.getElementById("vd-mk").style.color = from < -30 ? "#ff5a52" : todayColor;
+            } else {
+              fromTick.style.display = "none";
+            }
+
+            var tl = gsap.timeline({ paused: true });
+            // Shorter cuts read the line faster: every reveal time scales by `pace`.
+            var pace = (window.__hyperframes ? window.__hyperframes.getVariables() : {}).pace || 1;
+            var P = function (t) { return t * pace; };
+            tl.fromTo("#vd-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, P(0));
+            // The verdict lands line by line as it is spoken.
+            tl.fromTo("#vd-l1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(0.9));
+            tl.fromTo("#vd-l2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(1.6));
+
+            // Then the chart in reading order: frame, reference line, data, annotation.
+            tl.fromTo("#vd-box", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, P(2.4));
+            tl.fromTo("#vd-track", { opacity: 0, scaleX: 0, transformOrigin: "0% 50%" }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "power2.inOut" }, P(2.7));
+            tl.fromTo(["#vd-zero", "#vd-t-zero"], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, P(3.0));
+            tl.fromTo("#vd-band", { opacity: 0 }, { opacity: 0.9, duration: 0.4, ease: "power2.out" }, P(3.1));
+            if (from != null) {
+              tl.fromTo("#vd-mk", { opacity: 0, x: X(from) }, { opacity: 1, x: X(from), duration: 0.3, ease: "power2.out" }, P(3.2));
+              tl.fromTo("#vd-t-from", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, P(3.3));
+              // "...from minus thirty-nine to minus five": first leg, to today.
+              tl.to("#vd-mk", { x: X(today), duration: P(1.0), ease: "power2.inOut" }, P(3.6));
+              reel.count(tl, "#vd-mk-n", { from: from, to: today, decimals: 0, signed: true, at: P(3.6), duration: P(1.0), ease: "power2.inOut" });
+              tl.to("#vd-mk", { color: todayColor, duration: 0.4, ease: "power2.inOut" }, P(4.1));
+              tl.fromTo("#vd-t-today", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, P(4.5));
+              // "Race day? Plus fourteen": second leg, into the band.
+              tl.to("#vd-mk", { x: X(race), duration: P(1.0), ease: "power2.inOut" }, P(5.2));
+              reel.count(tl, "#vd-mk-n", { from: today, to: race, decimals: 0, signed: true, at: P(5.2), duration: P(1.0), ease: "power2.inOut" });
+              tl.to("#vd-mk", { color: "#3ddc84", duration: 0.5, ease: "power2.inOut" }, P(5.8));
+              tl.fromTo("#vd-t-sweet", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(6.3));
+            } else {
+              tl.fromTo("#vd-mk", { opacity: 0, x: X(today) }, { opacity: 1, x: X(today), duration: 0.3, ease: "power2.out" }, P(3.2));
+              tl.fromTo("#vd-t-today", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, P(3.3));
+
+              // "...at plus thirteen form": the marker travels into the band.
+              tl.to("#vd-mk", { x: X(race), duration: P(1.8), ease: "power2.inOut" }, P(3.9));
+              reel.count(tl, "#vd-mk-n", { from: today, to: race, decimals: 0, signed: true, at: P(3.9), duration: P(1.8), ease: "power2.inOut" });
+              tl.to("#vd-mk", { color: "#3ddc84", duration: 0.5, ease: "power2.inOut" }, P(5.1));
+              tl.fromTo("#vd-t-sweet", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, P(5.9));
+            }
+            tl.fromTo("#vd-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, P(2.7));
+
+            window.__timelines["verdict"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

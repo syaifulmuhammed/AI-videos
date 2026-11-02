@@ -1,0 +1,165 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "pip": {
+    "_note": "Where your face sits in the twin video, as fractions of the frame. Used to crop the circle bubble shown over full-screen cards.",
+    "center_x": 0.5,
+    "center_y": 0.3,
+    "size": 0.62
+  },
+  "title": "Part 2: did the AI save my race?",
+  "_note": "TEMPLATE. Lines marked [after race] are finalised from the real result; keep them truthful whichever way it went.",
+  "footage": {
+    "_note": "Uses the 31 Oct clip of you until race footage arrives: drop a race clip in footage/ and retrack.",
+    "source": "../01-ai-coach-intervals/footage/ride-2026-10-31.mp4",
+    "zoom": 1.5,
+    "subject_y": 0.66,
+    "segments": [
+      {
+        "from": 0.0,
+        "to": 6.5,
+        "track": [
+          [
+            0,
+            0.66,
+            0.44
+          ],
+          [
+            1.6,
+            0.69,
+            0.45
+          ],
+          [
+            2.4,
+            0.72,
+            0.45
+          ],
+          [
+            3.2,
+            0.72,
+            0.45
+          ],
+          [
+            4.0,
+            0.7,
+            0.45
+          ],
+          [
+            4.8,
+            0.68,
+            0.46
+          ],
+          [
+            5.6,
+            0.63,
+            0.47
+          ],
+          [
+            6.5,
+            0.62,
+            0.47
+          ]
+        ]
+      },
+      {
+        "from": 26.2,
+        "to": 29.8,
+        "track": [
+          [
+            0,
+            0.66,
+            0.5
+          ],
+          [
+            0.6,
+            0.68,
+            0.5
+          ],
+          [
+            1.2,
+            0.66,
+            0.5
+          ],
+          [
+            1.8,
+            0.68,
+            0.5
+          ],
+          [
+            2.4,
+            0.7,
+            0.5
+          ],
+          [
+            3.0,
+            0.7,
+            0.5
+          ],
+          [
+            3.6,
+            0.69,
+            0.5
+          ]
+        ]
+      }
+    ],
+    "hook": 6.5,
+    "cards": 0.0,
+    "cta": 0.0,
+    "me": {
+      "label": "THAT'S ME",
+      "x": 36,
+      "y": 760
+    },
+    "grade": "eq=brightness=-0.07:contrast=1.08:saturation=1.05"
+  },
+  "beats": [
+    {
+      "id": "hook",
+      "card": "hook",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "Last week I rode double my taper. My AI coach said back off. Did it save my race?",
+      "caption": "Last week I rode DOUBLE my taper. My AI coach said back off. Did it save my race?",
+      "hold": 0.4,
+      "values": {
+        "line": "I rode double my taper.\nThe AI said back off.",
+        "word": "RESULT?",
+        "pill": "Part 2 · race day"
+      }
+    },
+    {
+      "id": "verdict",
+      "card": "verdict",
+      "layout": "full",
+      "start": 0.0,
+      "say": "[after race] Form: minus thirty nine, then minus five, and on the start line, plus twelve.",
+      "caption": "Form: minus 39, then minus 5, and on the start line +12.",
+      "pace": 0.85,
+      "values": {
+        "line1": "Back off.",
+        "line2": "Then race.",
+        "fromForm": -39,
+        "fromLabel": "30 Oct"
+      }
+    },
+    {
+      "id": "result",
+      "card": "result",
+      "layout": "full",
+      "start": 0.0,
+      "say": "[after race] One hour, two minutes, thirty four. Two forty one watts average.",
+      "caption": "1:02:34. 241 watts average."
+    },
+    {
+      "id": "cta",
+      "card": "cta",
+      "layout": "overlay",
+      "start": 0.0,
+      "say": "Want the AI setup that got me here? Comment COACH!",
+      "caption": "Want the AI setup that got me here? Comment COACH!",
+      "hold": 0.9
+    }
+  ]
+}

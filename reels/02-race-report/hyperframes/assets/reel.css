@@ -1,0 +1,182 @@
+/* Shared look for every scene of the reel. Text stays inside the 168-1150 px band:
+   captions sit at about 1180-1290 px and the twin bubble below them. */
+/* Montserrat (SIL OFL, from Fontsource), the heavy social-caption face, for every word on screen. */
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 400;
+  src: url("fonts/montserrat-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 600;
+  src: url("fonts/montserrat-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 700;
+  src: url("fonts/montserrat-latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 800;
+  src: url("fonts/montserrat-latin-800-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  font-weight: 900;
+  src: url("fonts/montserrat-latin-900-normal.woff2") format("woff2");
+}
+
+:root {
+  --ground: #0b0f14;
+  --panel: #141b24;
+  --line: #243042;
+  --ink: #ffe68f; /* butter yellow, same as the captions */
+  --muted: #c9b97c; /* dimmed butter for secondary lines */
+  --lime: #ffe68f; /* accent pills, borders and lines follow the butter yellow */
+  --hi: #ffffff; /* highlights, like the white keywords in the captions */
+  --red: #ff5a52;
+  --amber: #ffb020;
+  --green: #3ddc84;
+  --font: "Montserrat", "Inter", system-ui, sans-serif;
+}
+
+.r-ground {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1100px 900px at 85% 0%, #1a2433 0%, rgba(26, 36, 51, 0) 70%),
+    var(--ground);
+}
+
+.r-stage {
+  position: absolute;
+  inset: 0;
+  font-family: var(--font);
+  color: var(--ink);
+}
+
+.r-label {
+  position: absolute;
+  left: 84px;
+  top: 236px;
+  font-family: var(--font);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+
+.r-title {
+  position: absolute;
+  left: 84px;
+  right: 84px;
+  top: 286px;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.r-source {
+  position: absolute;
+  left: 84px;
+  right: 84px;
+  top: 1104px;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.r-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.r-box {
+  background: var(--panel);
+  border: 3px solid var(--line);
+  border-radius: 32px;
+}
+
+.r-tag {
+  position: absolute;
+  left: 60px;
+  top: 190px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  font-family: var(--font);
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Footage version (index.html carries class "footage"): the ride plays behind every card,
+   so grounds become a dark scrim and panels become dark glass over it. */
+html.footage .r-ground {
+  background: linear-gradient(180deg, rgba(11, 15, 20, 0.82) 0%, rgba(11, 15, 20, 0.7) 45%, rgba(11, 15, 20, 0.9) 100%);
+}
+
+html.footage .r-box {
+  background: rgba(15, 16, 22, 0.78);
+  backdrop-filter: blur(22px);
+}
+
+/* Clean footage look: no dark scrim, panels, tags, borders or outlines. Text floats on the
+   ride and is held off it by a soft shadow (no hard edge); the butter-yellow pills stay. */
+html.footage .r-ground,
+html.footage .r-box,
+html.footage .r-tag,
+html.footage #hook-box {
+  background: transparent !important;
+  border: none !important;
+  backdrop-filter: none !important;
+}
+
+html.footage #root,
+html.footage .r-stage {
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55), 0 0 26px rgba(0, 0, 0, 0.6);
+}
+
+html.footage #hook-days,
+html.footage #hook-me-pill,
+html.footage #pl-coach,
+html.footage #cta-box {
+  text-shadow: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Chart tracks lose their dark fill and become faint butter lines. */
+html.footage #vd-track,
+html.footage #gn-bar-bg {
+  background: rgba(255, 230, 143, 0.28) !important;
+}
+
+/* Without boxes the footage sits right behind the text: a deeper soft shadow, and the
+   small secondary lines go bold, full-strength butter so they survive bright sky. */
+html.footage #root,
+html.footage .r-stage {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75), 0 0 18px rgba(0, 0, 0, 0.7), 0 0 42px rgba(0, 0, 0, 0.5);
+}
+
+html.footage .pl-sub,
+html.footage #vd-box-sub,
+html.footage #gn-hero-w,
+html.footage .r-source,
+html.footage .wk-cap,
+html.footage #gn-second-k {
+  color: var(--ink) !important;
+  font-weight: 700 !important;
+}
+
+/* Chart ticks keep their meaning colours (red, amber, green); they only get bolder. */
+html.footage .vd-tick {
+  font-weight: 800 !important;
+}

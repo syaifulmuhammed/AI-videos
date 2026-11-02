@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Written by tools/hf_reel.py: one caption group per spoken chunk of timeline.json. -->
+<html lang="en" data-composition-id="captions">
+  <body>
+    <template>
+      <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+        <style>
+          /* Montserrat Black (SIL OFL, from Fontsource): the heavy all-caps caption look of CapCut-style reels. */
+          @font-face {
+            font-family: "Montserrat";
+            font-weight: 900;
+            src: url("assets/fonts/montserrat-latin-900-normal.woff2") format("woff2");
+          }
+          @font-face {
+            font-family: "Montserrat";
+            font-weight: 800;
+            src: url("assets/fonts/montserrat-latin-800-normal.woff2") format("woff2");
+          }
+          #root {
+            position: absolute;
+            inset: 0;
+            background: transparent;
+          }
+          .cap {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 1192px;
+            text-align: center;
+            overflow: visible;
+          }
+          /* No box, no outline: butter-yellow letters held off the footage by a soft shadow only. */
+          .cap-t {
+            display: inline-block;
+            padding: 0 30px;
+            font-family: "Montserrat", "Inter", system-ui, sans-serif;
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: 0.01em;
+            text-transform: uppercase;
+            color: #ffe68f;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6), 0 0 28px rgba(0, 0, 0, 0.65);
+            transform-origin: 50% 60%;
+          }
+          .cap-k {
+            color: #ffffff;
+          }
+        </style>
+        <div id="cap-0" class="cap clip" data-start="6.33" data-duration="1.86" data-track-index="0"><span class="cap-t">Form: minus <span class="cap-k">39,</span> then</span></div>
+        <div id="cap-1" class="cap clip" data-start="8.19" data-duration="1.79" data-track-index="0"><span class="cap-t">minus <span class="cap-k">5,</span> and on the</span></div>
+        <div id="cap-2" class="cap clip" data-start="9.98" data-duration="1.51" data-track-index="0"><span class="cap-t">start line <span class="cap-k">+12.</span></span></div>
+        <div id="cap-3" class="cap clip" data-start="11.79" data-duration="1.63" data-track-index="0"><span class="cap-t"><span class="cap-k">1:02:34.</span></span></div>
+        <div id="cap-4" class="cap clip" data-start="13.41" data-duration="2.79" data-track-index="0"><span class="cap-t"><span class="cap-k">241</span> watts average.</span></div>
+        <script>
+          (function () {
+            var fit = window.__hyperframes && window.__hyperframes.fitTextFontSize;
+            if (fit) {
+              document.querySelectorAll("#root .cap-t").forEach(function (el) {
+                var size = fit(el.textContent.toUpperCase(), { fontFamily: "Montserrat", fontWeight: 900, maxWidth: 900, baseSize: 64, minSize: 40 }).fontSize;
+                el.style.fontSize = size + "px";
+              });
+            }
+            var tl = gsap.timeline({ paused: true });
+            tl.fromTo("#cap-0 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 6.33);
+            tl.fromTo("#cap-1 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 8.19);
+            tl.fromTo("#cap-2 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 9.98);
+            tl.fromTo("#cap-3 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 11.79);
+            tl.fromTo("#cap-4 .cap-t", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2.2)" }, 13.41);
+            window.__timelines["captions"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

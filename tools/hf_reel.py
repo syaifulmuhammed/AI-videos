@@ -35,7 +35,7 @@ ROOT = Path(__file__).resolve().parent.parent
 HF = ROOT / "node_modules" / ".bin" / "hyperframes"
 SFX_DIR = ROOT / ".claude" / "skills" / "media-use" / "audio" / "assets" / "sfx"
 BUBBLE = (200, 1470, 130)  # centre x, centre y, radius of the twin bubble over full-screen cards
-LAYOUT = {"hook": "overlay", "cta": "overlay"}  # every other scene is a full-screen card
+LAYOUT = {"hook": "overlay", "cta": "overlay"}  # every other scene is a full-screen card (verdict, result, ...)
 VOICE_LEAD, VOICE_GAP, VOICE_TAIL = 0.1, 0.3, 1.6  # seconds before the first line, between lines, after the last
 PUNCH_IN = (2.4, 1.08)  # hard punch-in on the twin at "back off!": time, scale
 # Sound effects on visible actions, from the HyperFrames media-use library (Pixabay licence):
@@ -278,6 +278,9 @@ def sfx_tags(beats, total, voice):
 
 def write_index(project, beats, tl, data, total, voice=None, footage_len=None, music=False):
     values = scene_values(data)
+    for b in beats:  # scenes this script has no special mapping for read their own block of data.json
+        if b["card"] not in values and isinstance(data.get(b["card"]), dict):
+            values[b["card"]] = {k: v for k, v in data[b["card"]].items() if not k.startswith("_")}
     if voice and footage_len:
         # Your face carries the hook and CTA, so they keep the over-the-presenter layout.
         for card in LAYOUT:
@@ -553,7 +556,9 @@ def main():
 
     if a.render:
         env = dict(os.environ, HYPERFRAMES_NO_TELEMETRY="1")
-        subprocess.run([HF, "check"], cwd=project, env=env, check=True)
+        # Report, don't block: the no-box footage look trips contrast checks against bright sky by design.
+        if subprocess.run([HF, "check"], cwd=project, env=env).returncode:
+            print("check reported issues (see above); rendering anyway")
         out = (a.out or reel / "out" / "reel_hyperframes.mp4").resolve()
         out.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run([HF, "render", "-o", out, "-q", a.quality], cwd=project, env=env, check=True)

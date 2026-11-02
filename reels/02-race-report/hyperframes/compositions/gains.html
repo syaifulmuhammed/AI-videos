@@ -1,0 +1,130 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-id="gains"
+  data-composition-variables='[
+    { "id": "window", "type": "string", "label": "Comparison window", "default": "last 85 days vs previous 85" },
+    { "id": "hourPct", "type": "number", "label": "60-min power change (%)", "default": 4.3, "step": 0.1 },
+    { "id": "hourW", "type": "number", "label": "60-min power (W)", "default": 219, "step": 1 },
+    { "id": "secondLabel", "type": "string", "label": "Second result", "default": "1-min power" },
+    { "id": "secondPct", "type": "number", "label": "Second result change (%)", "default": 4.0, "step": 0.1 }
+  ]'
+>
+  <body>
+    <template>
+      <div id="root" data-composition-id="gains" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+          }
+          #gn-hero {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 520px;
+            text-align: center;
+            color: var(--hi);
+          }
+          #gn-hero-n {
+            font-size: 236px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.05em;
+          }
+          #gn-hero-cap {
+            margin-top: 14px;
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--ink);
+          }
+          #gn-hero-w {
+            margin-top: 6px;
+            font-size: 36px;
+            font-weight: 400;
+            color: var(--muted);
+          }
+          #gn-second {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            top: 968px;
+            padding: 22px 36px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+          }
+          #gn-second-k {
+            font-size: 38px;
+            font-weight: 700;
+            white-space: nowrap;
+          }
+          #gn-bar-bg {
+            flex: 1;
+            height: 22px;
+            border-radius: 11px;
+            background: var(--line);
+            overflow: hidden;
+          }
+          #gn-bar {
+            width: 100%;
+            height: 100%;
+            border-radius: 11px;
+            background: var(--muted);
+            transform-origin: 0% 50%;
+          }
+          #gn-second-n {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--ink);
+          }
+        </style>
+
+        <div id="gn-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div id="gn-label" class="r-label"></div>
+            <div id="gn-title" class="r-title">The work is paying off.</div>
+            <div id="gn-hero">
+              <div id="gn-hero-n" class="r-num">+0.0%</div>
+              <div id="gn-hero-cap">1-hour power</div>
+              <div id="gn-hero-w"></div>
+            </div>
+            <div id="gn-second" class="r-box">
+              <div id="gn-second-k"></div>
+              <div id="gn-bar-bg"><div id="gn-bar"></div></div>
+              <div id="gn-second-n" class="r-num"></div>
+            </div>
+            <div id="gn-source" class="r-source">Source: intervals.icu best efforts</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
+            var hourPct = v.hourPct != null ? v.hourPct : 4.3;
+            var secondPct = v.secondPct != null ? v.secondPct : 4.0;
+            document.getElementById("gn-second-k").textContent = v.secondLabel || "1-min power";
+            document.getElementById("gn-label").textContent = v.window || "last 85 days vs previous 85";
+            document.getElementById("gn-hero-w").textContent = "now " + (v.hourW != null ? v.hourW : 219) + " W";
+            document.getElementById("gn-second-n").textContent = reel.format(secondPct, 1, true) + "%";
+
+            var tl = gsap.timeline({ paused: true });
+            var words = reel.splitWords(document.getElementById("gn-title"));
+            tl.fromTo("#gn-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, 0);
+            reel.wordsIn(tl, words, 0.03);
+
+            // One hero number; the smaller result stays grey so the hour reads first.
+            tl.fromTo("#gn-hero", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, 1.0);
+            reel.count(tl, "#gn-hero-n", { from: 0, to: hourPct, decimals: 1, signed: true, suffix: "%", at: 1.05, duration: 1.2 });
+            tl.fromTo("#gn-second", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 2.5);
+            tl.fromTo("#gn-bar", { scaleX: 0 }, { scaleX: Math.min(1, secondPct / hourPct), duration: 0.6, ease: "power2.out" }, 2.6);
+            tl.fromTo("#gn-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.2);
+
+            window.__timelines["gains"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

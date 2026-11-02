@@ -1,0 +1,61 @@
+{
+  "_source": "TEMPLATE - the result block holds SAMPLE numbers for layout only. Filled from intervals.icu after the race (7 Nov): race activity + wellness TSB on race day.",
+  "athlete": {
+    "first_name": "Syaiful",
+    "ftp_w": 245,
+    "weight_kg": 77
+  },
+  "week": {
+    "range": "27 Oct-2 Nov 2026",
+    "hours": 7.1,
+    "distance_km": 239,
+    "tss": 481
+  },
+  "load": {
+    "fitness_ctl": 72,
+    "fatigue_atl": 77,
+    "form_tsb": -5
+  },
+  "coach": {
+    "hook_word": "BACK OFF.",
+    "directive": "Keep it light. Stay fresh.",
+    "directive_source": "Maintain training structure; taper: maintain reduced load and freshness",
+    "phase": "Taper"
+  },
+  "race": {
+    "name": "Masters TT",
+    "priority": "A",
+    "date_label": "7 Nov",
+    "days_to_go": 5,
+    "race_day_form_tsb": 14,
+    "target_form_min": 8,
+    "target_form_max": 18
+  },
+  "power_gains": {
+    "window": "last 85 days vs previous 85",
+    "items": [
+      {
+        "label": "60-min power",
+        "watts": 219,
+        "delta_pct": 4.3
+      },
+      {
+        "label": "1-min power",
+        "watts": 467,
+        "delta_pct": 4.0
+      }
+    ]
+  },
+  "_status": "template",
+  "result": {
+    "_note": "SAMPLE values, replace from the race activity",
+    "label": "Race result · Masters TT · 7 Nov",
+    "time": "1:02:34",
+    "timeCaption": "finish time",
+    "avgPower": 241,
+    "ftp": 245,
+    "np": 247,
+    "raceForm": 12,
+    "predicted": 14
+  }
+}

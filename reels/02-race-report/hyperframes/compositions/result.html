@@ -1,0 +1,118 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-id="result"
+  data-composition-variables='[
+    { "id": "label", "type": "string", "label": "Label", "default": "Race result · Masters TT" },
+    { "id": "time", "type": "string", "label": "Finish time", "default": "0:00:00" },
+    { "id": "timeCaption", "type": "string", "label": "Line under the time", "default": "finish time" },
+    { "id": "avgPower", "type": "number", "label": "Average power (W)", "default": 0, "step": 1 },
+    { "id": "ftp", "type": "number", "label": "FTP (W)", "default": 245, "step": 1 },
+    { "id": "np", "type": "number", "label": "Normalised power (W, 0 hides)", "default": 0, "step": 1 },
+    { "id": "raceForm", "type": "number", "label": "Form on the start line (TSB)", "default": 0, "step": 1 },
+    { "id": "predicted", "type": "number", "label": "Form the AI predicted", "default": 14, "step": 1 }
+  ]'
+>
+  <body>
+    <template>
+      <div id="root" data-composition-id="result" data-width="1080" data-height="1920">
+        <style>
+          #root {
+            position: absolute;
+            inset: 0;
+          }
+          #rs-hero {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 330px;
+            text-align: center;
+          }
+          #rs-time {
+            font-size: 220px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            color: var(--hi);
+          }
+          #rs-time-cap {
+            margin-top: 10px;
+            font-size: 44px;
+            font-weight: 800;
+          }
+          .rs-row {
+            position: absolute;
+            left: 84px;
+            right: 84px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 46px;
+            font-weight: 700;
+          }
+          .rs-row .rs-v {
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--hi);
+          }
+          .rs-row .rs-note {
+            font-size: 32px;
+            font-weight: 700;
+          }
+        </style>
+
+        <div id="rs-clip" class="clip" data-start="0" data-duration="60" data-track-index="0">
+          <div class="r-ground"></div>
+          <div class="r-stage">
+            <div id="rs-label" class="r-label"></div>
+            <div id="rs-hero">
+              <div id="rs-time" class="r-num"></div>
+              <div id="rs-time-cap"></div>
+            </div>
+            <div id="rs-power" class="rs-row" style="top: 720px">
+              <div>Avg power <span class="rs-note" id="rs-pct"></span></div>
+              <div class="rs-v r-num"><span id="rs-power-n">0</span> W</div>
+            </div>
+            <div id="rs-np" class="rs-row" style="top: 840px">
+              <div>Normalised power</div>
+              <div class="rs-v r-num"><span id="rs-np-n"></span> W</div>
+            </div>
+            <div id="rs-form" class="rs-row" style="top: 960px">
+              <div>Start-line form <span class="rs-note" id="rs-pred"></span></div>
+              <div class="rs-v r-num" id="rs-form-n" style="color: var(--green)"></div>
+            </div>
+            <div id="rs-source" class="r-source">Source: intervals.icu race file</div>
+          </div>
+        </div>
+
+        <script>
+          (function () {
+            var v = window.__hyperframes ? window.__hyperframes.getVariables() : {};
+            var pace = v.pace || 1;
+            var P = function (t) { return t * pace; };
+            var avg = v.avgPower || 0, ftp = v.ftp || 245, np = v.np || 0;
+            document.getElementById("rs-label").textContent = v.label || "Race result";
+            document.getElementById("rs-time").textContent = v.time || "";
+            document.getElementById("rs-time-cap").textContent = v.timeCaption || "finish time";
+            document.getElementById("rs-pct").textContent = "(" + Math.round((avg / ftp) * 100) + "% of FTP)";
+            document.getElementById("rs-np-n").textContent = np;
+            if (!np) document.getElementById("rs-np").style.display = "none";
+            document.getElementById("rs-form-n").textContent = reel.format(v.raceForm || 0, 0, true);
+            document.getElementById("rs-pred").textContent = "(AI said " + reel.format(v.predicted != null ? v.predicted : 14, 0, true) + ")";
+
+            var tl = gsap.timeline({ paused: true });
+            tl.fromTo("#rs-label", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power4.out" }, P(0));
+            // The time is the payoff: it lands big and holds; the numbers follow in reading order.
+            tl.fromTo("#rs-hero", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, P(0.5));
+            tl.fromTo("#rs-power", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, P(1.8));
+            reel.count(tl, "#rs-power-n", { from: 0, to: avg, decimals: 0, at: P(1.85), duration: P(1.0) });
+            tl.fromTo("#rs-np", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, P(2.6));
+            tl.fromTo("#rs-form", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, P(3.4));
+            tl.fromTo("#rs-source", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, P(1.0));
+            window.__timelines["result"] = tl;
+          })();
+        </script>
+      </div>
+    </template>
+  </body>
+</html>

@@ -1,5 +1,10 @@
 # Review: reel 01 in HyperFrames
 
+## Music (2 Nov)
+- **Source:** every music source is blocked here (HeyGen catalogue, Pixabay, Openverse, Hugging Face for MusicGen), so `tools/make_music.py` composes an original track from scratch, with no samples. It's seeded, so it's reproducible. Kick, clap, hats, an eighth-note bass, a plucked i–VI–III–VII arpeggio and a pad, with kick sidechain pumping. The tempo is snapped (103.7 BPM) so the drop and a riser land on the hook→setup cut.
+- **Mix:** the music is normalised to −24 LUFS, then sidechain-compressed by the narration (about 10 dB more under speech, recovering in pauses). It plays as `<audio id="music">` on track 6. The rendered reel measures −16.4 LUFS integrated, −1.5 dBFS true peak, LRA 2.2.
+- **Measured, not heard:** I checked the waveform, spectrogram and levels. Nobody has listened to it yet. If it doesn't suit, rebuild without `--music` and use Instagram's trending audio.
+
 ## Focus on you (2 Nov)
 - **Correction:** you are the rider in white *ahead* of the camera, not the camera holder. Earlier versions opened and closed on his selfie and called it "your face". That is now fixed in both cuts.
 - **The focus clip:** `footage.segments` in the timelines keeps only the shots of you (0–6.5 s and 26.2–29.8 s of the original), cut from the 720p original in `footage/`. Each is cropped 1.5× around a keyframed track of your position, so you sit centred and 66% down the frame, below the hook box. `assets/ride.mp4` is that 10.4 s clip.

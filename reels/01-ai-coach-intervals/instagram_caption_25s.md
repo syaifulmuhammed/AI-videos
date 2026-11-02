@@ -21,7 +21,7 @@ Race report after 7 Nov. Did the AI get it right? 👀
 **Before you post:**
 - Post on 2 Nov, while "5 days" is true. On another day, change the number here and in the video.
 - Turn on the AI label (Advanced settings → Add AI label).
-- Add a trending song in the editor at about 15–25% under the voiceover.
+- The video has its own music: an original, royalty-free track made for this reel. Don't add a second song in Instagram, because two tracks will clash. If you'd rather use trending audio, ask for a version without the built-in music.
 - Tag the riders who appear (the rider on your left is in several shots), or check they're happy to be in it.
 - Have the "COACH" DM reply ready: a short summary of the setup or a link to a guide.
 - Only keep the "Race report after 7 Nov" line if you plan to post the follow-up. A part 2 is what turns viewers into followers.

@@ -62,7 +62,7 @@ Form went from −39 to −5 after the lighter days. The coach's call moved from
 ## Sound and music
 
 - **Sound effects:** quiet effects mark visible actions: a bass hit on "BACK OFF.", pops, a ping when form lands, a chime at the sweet spot and a sparkle on the power gain. They come from the HyperFrames library (Pixabay licence).
-- **No music in the file:** add a trending song in the Instagram editor (Add audio → pick a track → Mix audio). Set the music to about 15–25% and leave the original audio at 100%, so the voice stays on top. Trending audio also helps reach.
+- **Music:** the 25-second cut has an original track built in (`tools/make_music.py`): upbeat electronic, 104 BPM, A minor. A quiet intro under the hook drops into the groove at 4.6 s, and it fades at the end. It's mixed about 10 dB under the voice and dips further while the narrator speaks, so it's royalty-free and needs no Instagram music. For trending audio instead, build without `--music`.
 
 ## Disclosure
 

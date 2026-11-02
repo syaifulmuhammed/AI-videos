@@ -200,6 +200,23 @@ def footage_tags(beats, tl, total, length):
     return tags, script
 
 
+def make_music_bed(project, total, drop, level=-24.0):
+    """Compose an original bed (tools/make_music.py) and duck it under the narration.
+
+    The music sits at `level` LUFS (about 8 dB under the -16 LUFS voice) and dips a
+    further ~10 dB whenever the narrator speaks, recovering in the pauses.
+    """
+    raw = project / "assets" / "music_raw.wav"
+    run([ROOT / ".venv" / "bin" / "python", ROOT / "tools" / "make_music.py", raw,
+         "--duration", f"{total:.2f}", "--drop", f"{drop:.2f}"])
+    run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", raw, "-i", project / "assets" / "narration.wav",
+         "-filter_complex",
+         f"[0:a]loudnorm=I={level}:TP=-3:LRA=11[m];[1:a]aformat=channel_layouts=stereo[k];"
+         "[m][k]sidechaincompress=threshold=0.015:ratio=6:attack=15:release=350:makeup=1[out]",
+         "-map", "[out]", "-t", f"{total:.2f}", "-ar", "48000", project / "assets" / "music.wav"])
+    raw.unlink()
+
+
 def reframe_script(beats, tl, total):
     """Root-timeline tweens: the twin shrinks into the bubble for each run of full-screen cards."""
     pip = tl["pip"]
@@ -253,7 +270,7 @@ def sfx_tags(beats, total, voice):
     return tags
 
 
-def write_index(project, beats, tl, data, total, voice=None, footage_len=None):
+def write_index(project, beats, tl, data, total, voice=None, footage_len=None, music=False):
     values = scene_values(data)
     if voice and footage_len:
         # Your face carries the hook and CTA, so they keep the over-the-presenter layout.
@@ -282,6 +299,9 @@ def write_index(project, beats, tl, data, total, voice=None, footage_len=None):
     if voice:
         presenter = (f'<audio id="narration" class="clip" src="assets/narration.wav" data-start="0" data-duration="{total:.2f}"\n'
                      f'        data-track-index="0" data-volume="1"></audio>')
+        if music:
+            presenter += (f'\n      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="{total:.2f}"\n'
+                          f'        data-track-index="6" data-volume="1"></audio>')
         presenter = "\n      ".join([presenter, *footage])
     else:
         presenter = (f'<div id="twin-frame">\n'
@@ -453,6 +473,7 @@ def main():
     src.add_argument("--placeholder", action="store_true", help="use a stand-in presenter")
     src.add_argument("--voice", help="no presenter: narrate with this local Kokoro voice (e.g. am_michael)")
     ap.add_argument("--footage", type=Path, help="with --voice: your own video to play under the cards (hook and CTA show it full frame)")
+    ap.add_argument("--music", action="store_true", help="with --voice: compose an original music bed and duck it under the voice")
     ap.add_argument("--speed", type=float, default=1.2, help="narration speed for --voice (default 1.2: reels want a brisk read)")
     ap.add_argument("--auto-sync", action="store_true", help="align beats to the pauses in the twin's audio")
     ap.add_argument("--render", action="store_true", help="check, then render the reel")
@@ -498,7 +519,12 @@ def main():
 
     ride = project / "assets" / "ride.mp4"
     footage_len = probe_duration(ride) if a.voice and (a.footage or tl.get("footage")) and ride.exists() else None
-    write_index(project, beats, tl, data, total, a.voice, footage_len)
+    music = bool(a.voice and a.music)
+    if music:
+        make_music_bed(project, total, drop=beats[0]["end"])
+    else:
+        (project / "assets" / "music.wav").unlink(missing_ok=True)
+    write_index(project, beats, tl, data, total, a.voice, footage_len, music)
     write_captions(project, beats, tl, total, skip=LAYOUT if footage_len else ())
     print(f"wrote {project / 'index.html'} and compositions/captions.html ({total:.1f}s, {len(beats)} beats)")
 

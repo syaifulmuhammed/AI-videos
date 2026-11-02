@@ -1,12 +1,17 @@
 # Review: reel 01 in HyperFrames
 
+## Focus on you (2 Nov)
+- **Correction:** you are the rider in white *ahead* of the camera, not the camera holder. Earlier versions opened and closed on his selfie and called it "your face". That is now fixed in both cuts.
+- **The focus clip:** `footage.segments` in the timelines keeps only the shots of you (0–6.5 s and 26.2–29.8 s of the original), cut from the 720p original in `footage/`. Each is cropped 1.5× around a keyframed track of your position, so you sit centred and 66% down the frame, below the hook box. `assets/ride.mp4` is that 10.4 s clip.
+- **Hook:** opens on the second stretch at 0.79× with a "THAT'S ME" marker (0.4–2.6 s) pointing at you. Behind the cards the clip runs at 0.67× in the 25 s cut. The 42 s cut repeats it rather than slowing below 0.6×. The CTA uses the first stretch.
+- **Measured, not tracked automatically:** your position was read off gridded frames, about one per 0.6–0.8 s. If you shift between keyframes you can drift about 5% off centre.
+
 ## 25-second cut (2 Nov)
 - **Beats:** `timeline_25s.json` keeps hook, setup, verdict, payoff and CTA, with shorter lines. Pauses after the verdict, payoff and CTA bring it to 24.8 s.
 - **Pace:** the setup and verdict scenes take a `pace` variable (0.6 and 0.75 here) that scales their reveal times, and their sound effects with them. The 42-second version keeps pace 1.
 - **Which version is loaded:** `index.html` is whichever cut was built last. Rebuild with `--timeline` to switch.
-- **CTA footage:** opens on your face, which pans to the bunch after about 2 s. The box carries the ask, so I kept it.
 
-## Your ride footage (2 Nov)
+## Your ride footage (2 Nov, superseded by "Focus on you" above)
 - **The footage:** your 31 Oct group-ride clip (`assets/ride.mp4`, made upright, 1080×1920, a keyframe every second, muted) plays under the whole reel. The hook opens on the steady selfie stretch (from 20.3 s), so your real face is the thumbnail. The data cards sit on a dark scrim with glass panels over the ride, at 0.91× so the 29.8 s clip covers all 32.8 s of cards. The CTA returns to the selfie (from 8.6 s).
 - **Layout around your face:** the hook and CTA keep the over-the-presenter layout. The CTA box moves to the top (270 px), and those two beats have no captions, because the face fills the lower half and their cards already show the line in big type.
 - **Tag:** "AI-generated voiceover" (the footage is real). The ride's own audio is wind noise, so it is left out.

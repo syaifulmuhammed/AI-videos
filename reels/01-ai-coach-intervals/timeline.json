@@ -70,9 +70,106 @@
     }
   ],
   "footage": {
-    "_note": "Seconds into your ride video where each part starts: hook and cta should open on your face.",
-    "hook": 20.3,
+    "_note": "Your ride clip, cut to the shots of you (the rider in white ahead of the camera), zoomed and following you. track = [seconds into the segment, x, y of your centre as fractions of the frame].",
+    "source": "footage/ride-2026-10-31.mp4",
+    "zoom": 1.5,
+    "subject_y": 0.66,
+    "segments": [
+      {
+        "from": 0.0,
+        "to": 6.5,
+        "track": [
+          [
+            0,
+            0.66,
+            0.44
+          ],
+          [
+            1.6,
+            0.69,
+            0.45
+          ],
+          [
+            2.4,
+            0.72,
+            0.45
+          ],
+          [
+            3.2,
+            0.72,
+            0.45
+          ],
+          [
+            4.0,
+            0.7,
+            0.45
+          ],
+          [
+            4.8,
+            0.68,
+            0.46
+          ],
+          [
+            5.6,
+            0.63,
+            0.47
+          ],
+          [
+            6.5,
+            0.62,
+            0.47
+          ]
+        ]
+      },
+      {
+        "from": 26.2,
+        "to": 29.8,
+        "track": [
+          [
+            0,
+            0.66,
+            0.5
+          ],
+          [
+            0.6,
+            0.68,
+            0.5
+          ],
+          [
+            1.2,
+            0.66,
+            0.5
+          ],
+          [
+            1.8,
+            0.68,
+            0.5
+          ],
+          [
+            2.4,
+            0.7,
+            0.5
+          ],
+          [
+            3.0,
+            0.7,
+            0.5
+          ],
+          [
+            3.6,
+            0.69,
+            0.5
+          ]
+        ]
+      }
+    ],
+    "hook": 6.5,
     "cards": 0.0,
-    "cta": 8.6
+    "cta": 0.0,
+    "me": {
+      "label": "THAT'S ME",
+      "x": 36,
+      "y": 760
+    }
   }
 }

@@ -13,8 +13,9 @@ move into the bubble) and compositions/captions.html.
 
 With --voice there is no presenter: a local Kokoro voice reads each beat's `say` line,
 every card fills the screen, and each beat lasts exactly as long as its line. Add --footage
-to play your own phone footage underneath: the hook and CTA show it full frame (pick the
-moments with your face in timeline.json "footage"), and the data cards sit on dark glass over it.
+to play your own phone footage underneath: the hook and CTA show it full frame, and the data
+cards sit on dark glass over it. timeline.json "footage" picks the moments, and can cut the
+clip down to tracked segments, zoomed to keep you centred.
 """
 import argparse
 import hashlib
@@ -129,12 +130,40 @@ def make_voiceover(project, build, tl, voice, speed=1.0):
     return total
 
 
+def lerp_expr(track, i):
+    """ffmpeg expression for column i of [[t, x, y], ...] keyframes, linear between them, in segment time `t`."""
+    expr = f"{track[-1][i]}"
+    for (t0, *a), (t1, *b) in reversed(list(zip(track, track[1:]))):
+        v0, v1 = a[i - 1], b[i - 1]
+        expr = f"if(lt(t,{t1}),{v0}+({v1}-{v0})*(t-{t0})/{t1 - t0},{expr})"
+    return expr
+
+
 def prepare_footage(src, dest, tl):
-    """Upright, canvas-sized, silent, a keyframe every second (seeking never freezes)."""
+    """Upright, canvas-sized, silent, a keyframe every second (seeking never freezes).
+
+    With footage.segments in the timeline, keep only those stretches and crop each one
+    `zoom`x around the tracked subject, who lands at `subject_y` down the frame.
+    """
     w, h, fps = tl["width"], tl["height"], tl["fps"]
-    run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", src,
-         "-vf", f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},fps={fps},format=yuv420p",
-         "-c:v", "libx264", "-crf", "25", "-preset", "slow", "-g", str(fps), "-an", "-movflags", "+faststart", dest])
+    plan = tl.get("footage", {})
+    enc = ["-c:v", "libx264", "-crf", "22", "-preset", "slow", "-g", str(fps), "-an", "-movflags", "+faststart", dest]
+    if not plan.get("segments"):
+        run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", src,
+             "-vf", f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},fps={fps},format=yuv420p", *enc])
+        return
+    z, sy = plan.get("zoom", 1.0), plan.get("subject_y", 0.5)
+    chains = []
+    for i, seg in enumerate(plan["segments"]):
+        cx, cy = lerp_expr(seg["track"], 1), lerp_expr(seg["track"], 2)
+        cw, ch = f"trunc(iw/{z}/2)*2", f"trunc(iw/{z}*{h}/{w}/2)*2"
+        chains.append(
+            f"[0:v]trim={seg['from']}:{seg['to']},setpts=PTS-STARTPTS,"
+            f"crop=w={cw}:h={ch}:x='clip(({cx})*iw-ow/2,0,iw-ow)':y='clip(({cy})*ih-oh*{sy},0,ih-oh)',"
+            f"scale={w}:{h}:flags=lanczos,unsharp=5:5:0.5,fps={fps},format=yuv420p,setsar=1[s{i}]")
+    n = len(chains)
+    graph = ";".join(chains) + ";" + "".join(f"[s{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[v]"
+    run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", src, "-filter_complex", graph, "-map", "[v]", *enc])
 
 
 def footage_tags(beats, tl, total, length):
@@ -152,12 +181,20 @@ def footage_tags(beats, tl, total, length):
             cur[2] = b["end"]
     for name, start, end, media_start in runs:
         dur = end - start
-        rate = max(0.5, min(1.0, (length - media_start) / dur))
+        avail = length - media_start
+        rate = max(0.6, min(1.0, avail / dur))
         rate_attr = f' data-playback-rate="{rate:.3f}"' if rate < 1 else ""
-        tags.append(f'<div id="ride-{name}-wrap" class="ride-wrap">\n'
-                    f'        <video id="ride-{name}" class="clip" src="assets/ride.mp4" data-start="{start:.2f}" data-duration="{dur:.2f}"\n'
-                    f'          data-media-start="{media_start:.2f}"{rate_attr} data-track-index="0" muted playsinline></video>\n'
-                    f'      </div>')
+        # When even 0.6x can't cover the run, play the footage again from the top.
+        pieces, t, k = [], start, 0
+        while t < end - 0.01:
+            piece = min(end - t, (avail if k == 0 else length) / rate)
+            pieces.append((t, piece, media_start if k == 0 else 0.0))
+            t, k = t + piece, k + 1
+        clips = "\n".join(
+            f'        <video id="ride-{name}{"-" + str(j) if j else ""}" class="clip" src="assets/ride.mp4" data-start="{ps:.2f}" data-duration="{pd:.2f}"\n'
+            f'          data-media-start="{pm:.2f}"{rate_attr} data-track-index="{j % 2}" muted playsinline></video>'
+            for j, (ps, pd, pm) in enumerate(pieces))
+        tags.append(f'<div id="ride-{name}-wrap" class="ride-wrap">\n{clips}\n      </div>')
     if runs and runs[0][0] == "hook":
         script.append(f'tl.set("#ride-hook-wrap", {{ scale: {PUNCH_IN[1]}, transformOrigin: "50% 60%" }}, {PUNCH_IN[0]});')
     return tags, script
@@ -222,7 +259,10 @@ def write_index(project, beats, tl, data, total, voice=None, footage_len=None):
         # Your face carries the hook and CTA, so they keep the over-the-presenter layout.
         for card in LAYOUT:
             values[card]["tag"] = "AI-generated voiceover"
-        values["cta"]["boxTop"] = 270  # the face fills the lower half of the selfie shots
+        values["cta"]["boxTop"] = 270  # keep the ask clear of the rider in the middle of the frame
+        me = tl.get("footage", {}).get("me")
+        if me:
+            values["hook"].update(meLabel=me["label"], meX=me["x"], meY=me["y"])
     elif voice:
         for card in LAYOUT:
             values[card]["mode"] = "card"
@@ -430,8 +470,9 @@ def main():
         total = make_voiceover(project, build, tl, a.voice, a.speed)
         beats = tl["beats"]
         (project / "assets" / "twin.mp4").unlink(missing_ok=True)
-        if a.footage:
-            prepare_footage(a.footage.resolve(), project / "assets" / "ride.mp4", tl)
+        source = a.footage.resolve() if a.footage else (reel / tl["footage"]["source"] if tl.get("footage", {}).get("source") else None)
+        if source:
+            prepare_footage(source, project / "assets" / "ride.mp4", tl)
         elif (project / "assets" / "ride.mp4").exists() and not tl.get("footage"):
             (project / "assets" / "ride.mp4").unlink()
     else:

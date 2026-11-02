@@ -6,6 +6,9 @@
     { "id": "days", "type": "number", "label": "Days to race", "default": 5, "min": 1, "step": 1 },
     { "id": "word", "type": "string", "label": "Slam word", "default": "BACK OFF." },
     { "id": "tag", "type": "string", "label": "Disclosure tag", "default": "" },
+    { "id": "meLabel", "type": "string", "label": "Marker pointing at you (empty hides it)", "default": "" },
+    { "id": "meX", "type": "number", "label": "Marker left (px)", "default": 70, "step": 10 },
+    { "id": "meY", "type": "number", "label": "Marker top (px)", "default": 760, "step": 10 },
     { "id": "mode", "type": "enum", "label": "Layout", "default": "presenter", "options": [{ "value": "presenter", "label": "Over the presenter" }, { "value": "card", "label": "Full-screen card (voiceover)" }] }
   ]'
 >
@@ -77,6 +80,29 @@
             font-weight: 700;
             color: var(--muted);
           }
+          #hook-me {
+            position: absolute;
+            display: none;
+            align-items: center;
+            gap: 14px;
+            font-family: var(--font);
+          }
+          #hook-me-pill {
+            padding: 12px 24px;
+            border-radius: 999px;
+            background: var(--lime);
+            color: var(--ground);
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+          }
+          #hook-me-arrow {
+            width: 0;
+            height: 0;
+            border-top: 18px solid transparent;
+            border-bottom: 18px solid transparent;
+            border-left: 28px solid var(--lime);
+          }
           #hook-days {
             display: inline-block;
             margin-top: 18px;
@@ -99,6 +125,7 @@
             <div id="hook-days"><span id="hook-days-n">5</span> days before my A race</div>
           </div>
           <div id="hook-race" class="hook-card-only">Masters TT &middot; 7 Nov</div>
+          <div id="hook-me"><div id="hook-me-pill"></div><div id="hook-me-arrow"></div></div>
         </div>
 
         <script>
@@ -107,6 +134,13 @@
             document.getElementById("hook-days-n").textContent = vars.days != null ? vars.days : 5;
             if (vars.word) document.getElementById("hook-stop").textContent = vars.word;
             if (vars.tag) document.getElementById("hook-tag").textContent = vars.tag;
+            var me = document.getElementById("hook-me");
+            if (vars.meLabel) {
+              document.getElementById("hook-me-pill").textContent = vars.meLabel;
+              me.style.display = "flex";
+              me.style.left = (vars.meX != null ? vars.meX : 70) + "px";
+              me.style.top = (vars.meY != null ? vars.meY : 760) + "px";
+            }
             var card = vars.mode === "card";
             if (card) {
               document.getElementById("root").classList.add("card-mode");
@@ -122,6 +156,11 @@
               // No face to punch in on: the card itself cuts tighter on "back off!".
               tl.set("#hook-box", { scale: 1.05, transformOrigin: "50% 50%" }, 2.4);
               tl.fromTo("#hook-race", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 2.4);
+            }
+            if (vars.meLabel) {
+              // Point the viewer at you while the hook is read, then get out of the way.
+              tl.fromTo("#hook-me", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, 0.4);
+              tl.to("#hook-me", { opacity: 0, duration: 0.25, ease: "power2.in" }, 2.6);
             }
             window.__timelines["hook"] = tl;
           })();
